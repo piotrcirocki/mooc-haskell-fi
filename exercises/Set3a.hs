@@ -12,6 +12,8 @@ import Mooc.Todo
 import Data.Char
 import Data.Either
 import Data.List
+import Language.Haskell.TH (multiIfE)
+import Distribution.Simple.Program.HcPkg (list)
 
 ------------------------------------------------------------------------------
 -- Ex 1: implement the function maxBy that takes as argument a
@@ -148,7 +150,12 @@ powers k max = takeWhile (<= max) [k^n | n <- [0..max]]
 --     ==> Avvt
 
 while :: (a->Bool) -> (a->a) -> a -> a
-while check update value = todo
+while check update value = if check value then
+                            while check update (update value)
+                           else 
+                            value
+
+  --todo
 
 ------------------------------------------------------------------------------
 -- Ex 8: another version of a while loop. This time, the check
@@ -168,13 +175,15 @@ while check update value = todo
 -- Hint! Remember the case-of expression from lecture 2.
 
 whileRight :: (a -> Either b a) -> a -> b
-whileRight check x = todo
+whileRight check x = case check x of
+                       Left a -> a
+                       Right b -> whileRight check b
 
 -- for the whileRight examples:
 -- step k x doubles x if it's less than k
 step :: Int -> Int -> Either Int Int
 step k x = if x<k then Right (2*x) else Left x
-
+  
 -- bomb x implements a countdown: it returns x-1 or "BOOM" if x was 0
 bomb :: Int -> Either String Int
 bomb 0 = Left "BOOM"
@@ -192,7 +201,7 @@ bomb x = Right (x-1)
 -- Hint! This is a great use for list comprehensions
 
 joinToLength :: Int -> [String] -> [String]
-joinToLength = todo
+joinToLength x lst =  filter (\y -> length y == x) [a++b | a <- lst, b <- lst]
 
 ------------------------------------------------------------------------------
 -- Ex 10: implement the operator +|+ that returns a list with the first
@@ -206,6 +215,14 @@ joinToLength = todo
 --   [] +|+ [True]        ==> [True]
 --   [] +|+ []            ==> []
 
+-- (+|+) :: [a] -> [a] -> [a]
+-- (+|+) aa  bb = fst aa + fst bb
+
+(+|+) :: [Int] -> [Int] -> [Int]
+(+|+) [] [] = []
+(+|+) [] yy = [head yy]
+(+|+) xx [] = [head xx]
+(+|+) xx yy = [head xx] ++ [head yy]
 
 ------------------------------------------------------------------------------
 -- Ex 11: remember the lectureParticipants example from Lecture 2? We
@@ -221,8 +238,13 @@ joinToLength = todo
 --   sumRights [Right 1, Left "bad value", Right 2]  ==>  3
 --   sumRights [Left "bad!", Left "missing"]         ==>  0
 
+-- let mapRight f = map (either Left (Right . f))
+-- mapRight :: (b1 -> b2) -> [Either a b1] -> [Either a b2]
+-- mapRight f = map (either Left (Right . f))
+
 sumRights :: [Either a Int] -> Int
-sumRights = todo
+sumRights lst = sum $ rights lst  
+
 
 ------------------------------------------------------------------------------
 -- Ex 12: recall the binary function composition operation
@@ -238,7 +260,14 @@ sumRights = todo
 --   multiCompose [(3*), (2^), (+1)] 0 ==> 6
 --   multiCompose [(+1), (2^), (3*)] 0 ==> 2
 
-multiCompose fs = todo
+--multiCompose [(3*), (^2), (+1)] 2
+--multiCompose :: [a]  -> b
+multiCompose [] p = p
+multiCompose fs p = multiFunction fs p 
+
+multiFunction :: [b -> b] -> b -> b
+multiFunction [f] = f
+multiFunction (f:fs)  = f . multiFunction fs
 
 ------------------------------------------------------------------------------
 -- Ex 13: let's consider another way to compose multiple functions. Given
@@ -259,8 +288,16 @@ multiCompose fs = todo
 --   multiApp id [head, (!!2), last] "axbxc" ==> ['a','b','c'] i.e. "abc"
 --   multiApp sum [head, (!!2), last] [1,9,2,9,3] ==> 6
 
-multiApp = todo
+--first map over values in array to x -> you will get updated list
+--then apply func to the list
 
+mapOver :: [t->a] -> t -> [a]
+mapOver [] val  = []
+mapOver [f] val = [f val]
+mapOver (x:xs) val = x val : mapOver xs val
+
+multiApp :: ([a] -> b) -> [t -> a] -> t -> b
+multiApp f lst val = f $ mapOver lst val 
 ------------------------------------------------------------------------------
 -- Ex 14: in this exercise you get to implement an interpreter for a
 -- simple language. You should keep track of the x and y coordinates,
@@ -293,5 +330,30 @@ multiApp = todo
 -- using (:). If you build the list in an argument to a helper
 -- function, the surprise won't work. See section 3.8 in the material.
 
-interpreter :: [String] -> [String]
-interpreter commands = todo
+-- up -- increment y by one
+-- down -- decrement y by one
+-- left -- decrement x by one
+-- right -- increment x by one
+-- printX -- print value of x
+-- printY -- print value of y
+
+-- data Points = Points {
+--   xVal :: Integer,
+--   yVal :: Integer,
+--   points :: [Integer]
+--   }
+
+
+-- op :: String -> Points -> Points
+-- op "up" (Points x y p) = Points (x + 1) y p
+-- op "printX" (Points x y p) = Points x y (p ++ [x])
+
+
+-- iHlpr :: [String] -> (String -> Points -> Points) -> Points -> [Integer]
+-- iHlpr [] op (Points x y p)  = p 
+-- iHlpr (c:cs) op pts  = iHlpr cs op (op c pts)
+
+
+-- -- interpreter :: [String] -> [String]
+-- interpreter commands = iHlpr commands op (Points 0 0 [])
+interpreter commands = todo 

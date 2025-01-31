@@ -27,6 +27,8 @@ module Set3b where
 
 import Mooc.LimitedPrelude
 import Mooc.Todo
+--import Set3a (Points(xVal))
+--import Data.ByteString (replicate)
 
 ------------------------------------------------------------------------------
 -- Ex 1: given numbers start, count and end, build a list that starts
@@ -37,9 +39,16 @@ import Mooc.Todo
 -- Examples:
 --   buildList 1 5 2 ==> [1,1,1,1,1,2]
 --   buildList 7 0 3 ==> [3]
+iterate f 0 x = []
+iterate f 1 x = [x]
+iterate f n x = x : iterate f (n-1) (f x)
+
+
+iterate1 0 x a = [a]
+iterate1 n x a = x : iterate1 (n - 1) x a
 
 buildList :: Int -> Int -> Int -> [Int]
-buildList start count end = todo
+buildList start count = iterate1 count start
 
 ------------------------------------------------------------------------------
 -- Ex 2: given i, build the list of sums [1, 1+2, 1+2+3, .., 1+2+..+i]
@@ -49,7 +58,27 @@ buildList start count end = todo
 -- Ps. you'll probably need a recursive helper function
 
 sums :: Int -> [Int]
-sums i = todo
+sums i = reverseList (iterate2 i)
+
+-- iterateArr  0 x = []
+-- iterateArr  1 x = [x]
+-- iterateArr  n x = x : iterateArr  (n-1) x
+
+sumList :: [Int] -> Int
+sumList [] = 0
+sumList (x:xs) = x + sumList xs
+
+iterate2 0 = []
+iterate2  n   =  sumList (iterate (+1) n 1) : iterate2 (n-1)
+
+-- iterate3 a n acc
+--   | a <= n =  iterate3 (a+1) n (sumList ((iterate (+1) a 1)) :acc)
+--   | a > n = acc 
+
+reverseList = go []
+    where
+        go acc [] = acc
+        go acc (x:xs) = go (x:acc) xs
 
 ------------------------------------------------------------------------------
 -- Ex 3: define a function mylast that returns the last value of the
@@ -63,7 +92,10 @@ sums i = todo
 --   mylast 0 [1,2,3] ==> 3
 
 mylast :: a -> [a] -> a
-mylast def xs = todo
+mylast def [] = def
+mylast def [x] = x
+mylast def (x:xs) = mylast def xs
+--mylast def xs = todo
 
 ------------------------------------------------------------------------------
 -- Ex 4: safe list indexing. Define a function indexDefault so that
@@ -81,7 +113,16 @@ mylast def xs = todo
 --   indexDefault ["a","b","c"] (-1) "d" ==> "d"
 
 indexDefault :: [a] -> Int -> a -> a
-indexDefault xs i def = todo
+indexDefault xs i def = go xs i def 0
+
+go [] i def acc = def
+go (x:xs) i def acc = if acc == i then x else go xs i def (acc +1)
+
+
+
+-- iterate3 a n acc
+--   | a <= n =  iterate3 (a+1) n (sumList ((iterate (+1) a 1)) :acc)
+--   | a > n = acc 
 
 ------------------------------------------------------------------------------
 -- Ex 5: define a function that checks if the given list is in

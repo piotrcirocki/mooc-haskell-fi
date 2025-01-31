@@ -337,23 +337,25 @@ multiApp f lst val = f $ mapOver lst val
 -- printX -- print value of x
 -- printY -- print value of y
 
--- data Points = Points {
---   xVal :: Integer,
---   yVal :: Integer,
---   points :: [Integer]
---   }
+data Points = Points {
+  xVal :: Integer,
+  yVal :: Integer,
+  points :: [String]
+  }
+
+op :: String -> Points -> Points
+op "up" (Points x y p) = Points x (y + 1) p
+op "down" (Points x y p) = Points x (y -1) p
+op "left" (Points x y p) = Points (x - 1) y p
+op "right" (Points x y p) = Points (x + 1) y p
+
+op "printX" (Points x y p) = Points x y (p ++ [ show x])
+op "printY" (Points x y p) = Points x y (p ++ [ show y])
+
+iHlpr :: [String] -> (String -> Points -> Points) -> Points -> [String]
+iHlpr [] op (Points x y p)  = p
+iHlpr (c:cs) op pts  = iHlpr cs op (op c pts)
 
 
--- op :: String -> Points -> Points
--- op "up" (Points x y p) = Points (x + 1) y p
--- op "printX" (Points x y p) = Points x y (p ++ [x])
-
-
--- iHlpr :: [String] -> (String -> Points -> Points) -> Points -> [Integer]
--- iHlpr [] op (Points x y p)  = p 
--- iHlpr (c:cs) op pts  = iHlpr cs op (op c pts)
-
-
--- -- interpreter :: [String] -> [String]
--- interpreter commands = iHlpr commands op (Points 0 0 [])
-interpreter commands = todo 
+interpreter :: [String] -> [String]
+interpreter commands = iHlpr commands op (Points 0 0 [])

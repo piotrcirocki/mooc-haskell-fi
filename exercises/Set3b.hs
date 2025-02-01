@@ -27,6 +27,7 @@ module Set3b where
 
 import Mooc.LimitedPrelude
 import Mooc.Todo
+--import Data.ByteString (length)
 --import Set3a (Points(xVal))
 --import Data.ByteString (replicate)
 
@@ -42,7 +43,7 @@ import Mooc.Todo
 iterate f 0 x = []
 iterate f 1 x = [x]
 iterate f n x = x : iterate f (n-1) (f x)
-
+--iterate (*2) 4 3 ==> [3,6,12,24] --iterate 3 , 4 times 
 
 iterate1 0 x a = [a]
 iterate1 n x a = x : iterate1 (n - 1) x a
@@ -69,7 +70,7 @@ sumList [] = 0
 sumList (x:xs) = x + sumList xs
 
 iterate2 0 = []
-iterate2  n   =  sumList (iterate (+1) n 1) : iterate2 (n-1)
+iterate2 n = sumList (iterate (+1) n 1) : iterate2 (n-1)
 
 -- iterate3 a n acc
 --   | a <= n =  iterate3 (a+1) n (sumList ((iterate (+1) a 1)) :acc)
@@ -138,7 +139,12 @@ go (x:xs) i def acc = if acc == i then x else go xs i def (acc +1)
 --   sorted [7,2,7] ==> False
 
 sorted :: [Int] -> Bool
-sorted xs = todo
+sorted [] = True
+sorted [x] = True
+sorted (x:xs) = go1 xs x
+
+go1 [] prev = True
+go1 (x:xs) prev = (prev <= x) && go1 xs x
 
 ------------------------------------------------------------------------------
 -- Ex 6: compute the partial sums of the given list like this:
@@ -149,8 +155,18 @@ sorted xs = todo
 --
 -- Use pattern matching and recursion (and the list constructors : and [])
 
+
+len :: [Int] -> Int
+len [] = 0
+len (x:xs) = 1 + len xs
+
+iterateThrough 0 x acc  = []
+iterateThrough n (x:xs) acc  = sumList (x:acc) : iterateThrough (n - 1) xs (x:acc)
+
 sumsOf :: [Int] -> [Int]
-sumsOf xs = todo
+sumsOf [] = []
+sumsOf [x] = [x]
+sumsOf xs = iterateThrough (len xs) xs []
 
 ------------------------------------------------------------------------------
 -- Ex 7: implement the function merge that merges two sorted lists of
@@ -163,7 +179,10 @@ sumsOf xs = todo
 --   merge [1,1,6] [1,2]   ==> [1,1,1,2,6]
 
 merge :: [Int] -> [Int] -> [Int]
-merge xs ys = todo
+merge [] [] = []
+merge xs [] = xs
+merge [] ys = ys
+merge (x:xs) (y:ys) = if x>y then y:merge (x:xs) ys else x:merge xs (y:ys)
 
 ------------------------------------------------------------------------------
 -- Ex 8: compute the biggest element, using a comparison function
@@ -186,8 +205,12 @@ merge xs ys = todo
 --   mymaximum (\(a,b) (c,d) -> b > d) ("",0) [("Banana",7),("Mouse",8)]
 --     ==> ("Mouse",8)
 
+iterateOver 0 x = []
+iterateOver n x = x : iterateOver (n - 1) x
+
 mymaximum :: (a -> a -> Bool) -> a -> [a] -> a
-mymaximum bigger initial xs = todo
+mymaximum f initial [] = initial
+mymaximum f initial (x:xs) = if f initial x then mymaximum f initial xs else mymaximum f x xs
 
 ------------------------------------------------------------------------------
 -- Ex 9: define a version of map that takes a two-argument function

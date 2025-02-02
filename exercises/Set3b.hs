@@ -232,6 +232,14 @@ go2 f [] bs arr = arr
 
 go2 f (a:as) (b:bs) arr =  go2 f as bs (f a b : arr) 
 
+
+
+--model Solution:
+
+-- map2 :: (a -> b -> c) -> [a] -> [b] -> [c]
+-- map2 f (a:as) (b:bs) = f a b:map2 f as bs
+-- map2 f _      _      = []
+
 ------------------------------------------------------------------------------
 -- Ex 10: implement the function maybeMap, which works a bit like a
 -- combined map & filter.
@@ -254,4 +262,18 @@ go2 f (a:as) (b:bs) arr =  go2 f as bs (f a b : arr)
 --   ==> []
 
 maybeMap :: (a -> Maybe b) -> [a] -> [b]
-maybeMap f xs = todo
+maybeMap f xs = reverseList (go3 f xs [])
+
+
+go3 :: (t -> Maybe a) -> [t] -> [a] -> [a]
+go3 f [] arr = arr
+go3 f (x:xs) arr = case f x of
+                     Just val -> go3 f xs (val:arr)
+                     Nothing -> go3 f xs arr
+
+
+--model solution:
+-- maybeMap :: (a -> Maybe b) -> [a] -> [b]
+-- maybeMap f (x:xs) = case f x of Just y -> y:maybeMap f xs
+--                                 Nothing -> maybeMap f xs
+-- maybeMap f [] = []

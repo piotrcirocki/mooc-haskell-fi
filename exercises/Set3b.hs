@@ -43,7 +43,6 @@ import Mooc.Todo
 iterate f 0 x = []
 iterate f 1 x = [x]
 iterate f n x = x : iterate f (n-1) (f x)
---iterate (*2) 4 3 ==> [3,6,12,24] --iterate 3 , 4 times 
 
 iterate1 0 x a = [a]
 iterate1 n x a = x : iterate1 (n - 1) x a
@@ -224,7 +223,14 @@ mymaximum f initial (x:xs) = if f initial x then mymaximum f initial xs else mym
 -- Use recursion and pattern matching. Do not use any library functions.
 
 map2 :: (a -> b -> c) -> [a] -> [b] -> [c]
-map2 f as bs = todo
+
+map2 f as bs = reverseList (go2 f as bs [])
+
+go2 f [] [] arr = arr
+go2 f as [] arr = arr
+go2 f [] bs arr = arr
+
+go2 f (a:as) (b:bs) arr =  go2 f as bs (f a b : arr) 
 
 ------------------------------------------------------------------------------
 -- Ex 10: implement the function maybeMap, which works a bit like a

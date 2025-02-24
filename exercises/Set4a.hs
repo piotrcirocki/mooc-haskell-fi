@@ -54,7 +54,7 @@ allEqual (x:xs) = all (==x) (x:xs)
 distinct :: Eq a => [a] -> Bool
 distinct [] = True
 distinct [x] = True
-distinct xs = length xs == length(nub xs)
+distinct xs = length xs == length (nub xs)
 
 ------------------------------------------------------------------------------
 -- Ex 3: implement the function middle that returns the middle value
@@ -67,7 +67,8 @@ distinct xs = length xs == length(nub xs)
 --   middle 'b' 'a' 'c'  ==> 'b'
 --   middle 1 7 3        ==> 3
 
-middle = todo
+middle :: Ord a => a -> a -> a -> a
+middle a b c  = sort [a, b, c] !! 1
 
 ------------------------------------------------------------------------------
 -- Ex 4: return the range of an input list, that is, the difference
@@ -82,8 +83,8 @@ middle = todo
 --   rangeOf [4,2,1,3]          ==> 3
 --   rangeOf [1.5,1.0,1.1,1.2]  ==> 0.5
 
-rangeOf :: [a] -> a
-rangeOf = todo
+rangeOf :: (Ord a, Num a) => [a] -> a
+rangeOf x = maximum x - minimum x
 
 ------------------------------------------------------------------------------
 -- Ex 5: given a (non-empty) list of (non-empty) lists, return the longest
@@ -101,7 +102,13 @@ rangeOf = todo
 --   longest [[1,2,3],[4,5],[6]] ==> [1,2,3]
 --   longest ["bcd","def","ab"] ==> "bcd"
 
-longest = todo
+
+longest []=[]
+longest [y] = y
+longest (x:y:list)
+ |length x < length y = longest (y:list)
+ |length x == length y && head x > head y = longest (y:list)
+ |otherwise = longest (x:list)
 
 ------------------------------------------------------------------------------
 -- Ex 6: Implement the function incrementKey, that takes a list of
@@ -149,7 +156,7 @@ average xs = todo
 --   winner (Map.fromList [("Bob",3470),("Jane",2130),("Lisa",9448)]) "Jane" "Lisa"
 --     ==> "Lisa"
 --   winner (Map.fromList [("Mike",13607),("Bob",5899),("Lisa",5899)]) "Lisa" "Bob"
---     ==> "Lisa"
+  --     ==> "Lisa"
 
 winner :: Map.Map String Int -> String -> String -> String
 winner scores player1 player2 = todo

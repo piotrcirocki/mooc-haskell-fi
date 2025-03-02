@@ -124,9 +124,13 @@ longest (x:y:list)
 --   incrementKey True [(True,1),(False,3),(True,4)] ==> [(True,2),(False,3),(True,5)]
 --   incrementKey 'a' [('a',3.4)] ==> [('a',4.4)]
 
-incrementKey :: k -> [(k,v)] -> [(k,v)]
-incrementKey = todo
+--[ reversed | word <- ["this","is","a","string"], let reversed = reverse word ]
+incrementKey ::(Num v, Eq v, Eq k) => k -> [(k,v)] -> [(k,v)]
+incrementKey k wrd = [mapped | word <- wrd, let mapped = mapp word k]
 
+mapp (k,v) key = if k == key then
+                  (k, v + 1)
+                 else (k, v)
 ------------------------------------------------------------------------------
 -- Ex 7: compute the average of a list of values of the Fractional
 -- class.

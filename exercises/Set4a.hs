@@ -16,11 +16,11 @@
 
 module Set4a where
 
-import Mooc.Todo
-import Data.List
-import Data.Ord
-import qualified Data.Map as Map
 import Data.Array
+import Data.List
+import Data.Map qualified as Map
+import Data.Ord
+import Mooc.Todo
 
 ------------------------------------------------------------------------------
 -- Ex 1: implement the function allEqual which returns True if all
@@ -183,8 +183,11 @@ findVal p1 p2 sc | Map.findWithDefault 0 p1 sc == Map.findWithDefault 0 p2 sc = 
 --     ==> Map.fromList [(False,3),(True,1)]
 
 freqs :: (Eq a, Ord a) => [a] -> Map.Map a Int
-freqs xs = todo
+freqs [] = Map.empty
+freqs xs = foldr alterNum Map.empty xs
 
+alterNum :: (Ord k, Num a) => k -> Map.Map k a -> Map.Map k a
+alterNum = Map.alter (Just . maybe 1 (+1))
 ------------------------------------------------------------------------------
 -- Ex 10: recall the withdraw example from the course material. Write a
 -- similar function, transfer, that transfers money from one account
@@ -233,3 +236,8 @@ swap i j arr = todo
 
 maxIndex :: (Ix i, Ord a) => Array i a -> i
 maxIndex = todo
+
+-- maxElement :: Ord a => [a] -> a
+-- maxElement = foldr max undefined
+-- concatStrings :: [String] -> String
+-- concatStrings = foldr (++) ""

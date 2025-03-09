@@ -73,8 +73,11 @@ slHelper currDouble (sumVal, len) = (sumVal + currDouble, len + 1)
 myConcat :: [[a]] -> [a]
 myConcat xs = foldr concatHelper concatStart xs
 
-concatStart = todo
-concatHelper = todo
+concatStart :: [a]
+concatStart = []
+
+concatHelper :: [a] -> [a] -> [a]
+concatHelper = (++)
 
 ------------------------------------------------------------------------------
 -- Ex 5: get all occurrences of the largest number in a list with a
@@ -88,8 +91,11 @@ concatHelper = todo
 largest :: [Int] -> [Int]
 largest xs = foldr largestHelper [] xs
 
-largestHelper = todo
-
+largestHelper :: Int -> [Int] -> [Int]
+largestHelper currElem acc | acc == [] = [currElem]
+                           | currElem > head acc = [currElem]
+                           | currElem < head acc = acc
+                           | otherwise = acc ++ [currElem]
 
 ------------------------------------------------------------------------------
 -- Ex 6: get the first element of a list with a fold. Define

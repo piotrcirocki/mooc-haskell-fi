@@ -21,6 +21,7 @@ import Data.List
 import Data.Map qualified as Map
 import Data.Ord
 import Mooc.Todo
+import qualified Data.IntMap as Member
 
 ------------------------------------------------------------------------------
 -- Ex 1: implement the function allEqual which returns True if all
@@ -213,9 +214,21 @@ alterNum = Map.alter (Just . maybe 1 (+1))
 --   transfer "Lisa" "Mike" 20 bank
 --     ==> fromList [("Bob",100),("Mike",50)]
 
-transfer :: String -> String -> Int -> Map.Map String Int -> Map.Map String Int
-transfer from to amount bank = todo
+-- let m = fromList [(1, 'a'), (2, 'b')]
+-- print $ lookup 1 m -- prints Just 'a'
 
+-- let m = M.fromList [(1, 'a'), (2, 'b')]
+-- print $ M.member 1 m -- Output: True
+
+transfer :: String -> String -> Int -> Map.Map String Int -> Map.Map String Int
+transfer from to amount bank =
+  if Map.member from bank && Map.member to bank
+     && amount > 0  && (Map.findWithDefault 0 from bank) >= amount
+  then
+    Map.insert from (Map.findWithDefault 0 from bank - amount)
+    (Map.insert to (Map.findWithDefault 0 to bank + amount) bank)
+  else
+    bank
 ------------------------------------------------------------------------------
 -- Ex 11: given an Array and two indices, swap the elements in the indices.
 --

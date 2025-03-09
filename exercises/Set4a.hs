@@ -22,6 +22,7 @@ import Data.Map qualified as Map
 import Data.Ord
 import Mooc.Todo
 import qualified Data.IntMap as Member
+import qualified Data.Ord as Data.Arrat
 
 ------------------------------------------------------------------------------
 -- Ex 1: implement the function allEqual which returns True if all
@@ -250,9 +251,9 @@ swap i j arr = arr // [(i, second), (j, first)]
 -- Hint: check out Data.Array.indices or Data.Array.assocs
 
 maxIndex :: (Ix i, Ord a) => Array i a -> i
-maxIndex = todo
+maxIndex arr  = fst $ foldr max1 (head $ assocs arr) (assocs arr)
 
--- maxElement :: Ord a => [a] -> a
--- maxElement = foldr max undefined
--- concatStrings :: [String] -> String
--- concatStrings = foldr (++) ""
+
+max1 :: Ord b => (a, b) -> (a, b) -> (a, b)
+max1 (v, x) (y, z) | x <= z = (y,z)
+                   | otherwise = (v,x)

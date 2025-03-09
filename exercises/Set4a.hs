@@ -223,7 +223,7 @@ alterNum = Map.alter (Just . maybe 1 (+1))
 transfer :: String -> String -> Int -> Map.Map String Int -> Map.Map String Int
 transfer from to amount bank =
   if Map.member from bank && Map.member to bank
-     && amount > 0  && (Map.findWithDefault 0 from bank) >= amount
+     && amount > 0  && Map.findWithDefault 0 from bank >= amount
   then
     Map.insert from (Map.findWithDefault 0 from bank - amount)
     (Map.insert to (Map.findWithDefault 0 to bank + amount) bank)
@@ -237,7 +237,9 @@ transfer from to amount bank =
 --         ==> array (1,4) [(1,"one"),(2,"three"),(3,"two"),(4,"four")]
 
 swap :: Ix i => i -> i -> Array i a -> Array i a
-swap i j arr = todo
+swap i j arr = arr // [(i, second), (j, first)]
+  where first = arr ! i
+        second =  arr ! j
 
 ------------------------------------------------------------------------------
 -- Ex 12: given an Array, find the index of the largest element. You

@@ -65,28 +65,28 @@ buyOneMore (MkShoppingEntry fruitName price count) = MkShoppingEntry fruitName p
 -- Also define a Person value fred, and the functions getAge, getName,
 -- setAge and setName (see below).
 
-data Person = PersonUndefined
+data Person = MkPerson {name :: String, age :: Int}
   deriving Show
 
 -- fred is a person whose name is Fred and age is 90
 fred :: Person
-fred = todo
+fred = MkPerson {name = "Fred", age = 90}
 
 -- getName returns the name of the person
 getName :: Person -> String
-getName p = todo
+getName (MkPerson name age) = name
 
 -- getAge returns the age of the person
 getAge :: Person -> Int
-getAge p = todo
+getAge (MkPerson name age) = age
 
 -- setName takes a person and returns a new person with the name changed
 setName :: String -> Person -> Person
-setName name p = todo
+setName name (MkPerson oldName age) = MkPerson name age
 
 -- setAge does likewise for age
 setAge :: Int -> Person -> Person
-setAge age p = todo
+setAge age (MkPerson name oldAge) = MkPerson name age
 
 ------------------------------------------------------------------------------
 -- Ex 5: define a datatype Position which contains two Int values, x

@@ -96,27 +96,27 @@ setAge age (MkPerson name oldAge) = MkPerson name age
 --   getY (up (up origin))    ==> 2
 --   getX (up (right origin)) ==> 1
 
-data Position = PositionUndefined
+data Position = Empty | Node Int Int Position
 
 -- origin is a Position value with x and y set to 0
 origin :: Position
-origin = todo
+origin  = Node 0 0 Empty  
 
 -- getX returns the x of a Position
 getX :: Position -> Int
-getX = todo
+getX (Node x y _) = x
 
 -- getY returns the y of a position
 getY :: Position -> Int
-getY = todo
+getY  (Node x y _) = y
 
 -- up increases the y value of a position by one
 up :: Position -> Position
-up = todo
+up (Node x y _) = Node x (y+1) Empty 
 
 -- right increases the x value of a position by one
 right :: Position -> Position
-right = todo
+right (Node x y _) = Node (x +1) y Empty 
 
 ------------------------------------------------------------------------------
 -- Ex 6: Here's a datatype that represents a student. A student can
@@ -131,8 +131,10 @@ data Student = Freshman | NthYear Int | Graduated
 -- graduated student stays graduated even if he studies.
 
 study :: Student -> Student
-study = todo
-
+study Freshman  = NthYear 1
+study (NthYear 7) = Graduated
+study (NthYear x) = NthYear (x+1)
+study Graduated = Graduated
 ------------------------------------------------------------------------------
 -- Ex 7: define a datatype UpDown that represents a counter that can
 -- either be in increasing or decreasing mode. Also implement the

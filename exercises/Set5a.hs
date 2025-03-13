@@ -135,6 +135,7 @@ study Freshman  = NthYear 1
 study (NthYear 7) = Graduated
 study (NthYear x) = NthYear (x+1)
 study Graduated = Graduated
+
 ------------------------------------------------------------------------------
 -- Ex 7: define a datatype UpDown that represents a counter that can
 -- either be in increasing or decreasing mode. Also implement the
@@ -152,25 +153,27 @@ study Graduated = Graduated
 -- get (tick (tick (toggle (tick zero))))
 --   ==> -1
 
-data UpDown = UpDownUndefined1 | UpDownUndefined2
-
+--data UpDown = UpDownUndefined1 | UpDownUndefined2
+data UpDown = NegativeTick Int | Tick Int
 -- zero is an increasing counter with value 0
 zero :: UpDown
-zero = todo
+zero = Tick 0
 
 -- get returns the counter value
 get :: UpDown -> Int
-get ud = todo
+get (Tick x) = x
+get (NegativeTick x) = x
 
 -- tick increases an increasing counter by one or decreases a
 -- decreasing counter by one
 tick :: UpDown -> UpDown
-tick ud = todo
-
+tick (Tick x) = Tick (x +1)
+tick (NegativeTick x) = NegativeTick (x-1)
 -- toggle changes an increasing counter into a decreasing counter and
 -- vice versa
 toggle :: UpDown -> UpDown
-toggle ud = todo
+toggle (Tick x) = NegativeTick x
+toggle (NegativeTick x) = Tick x
 
 ------------------------------------------------------------------------------
 -- Ex 8: you'll find a Color datatype below. It has the three basic

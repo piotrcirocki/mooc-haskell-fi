@@ -203,8 +203,14 @@ data Color = Red | Green | Blue | Mix Color Color | Invert Color
   deriving Show
 
 rgb :: Color -> [Double]
-rgb col = todo
-
+rgb Red = [1, 0, 0]
+rgb Green = [0, 1, 0]
+rgb Blue = [0, 0 , 1]
+rgb (Mix a b ) =  [ (rgb a !! 0 + rgb b !! 0 ) /2,
+                    (rgb a !! 1 + rgb b!! 1) /2,
+                    (rgb a !! 2 + rgb b!! 2) /2]
+                  
+rgb (Invert a) = [1 - rgb a !! 0, 1 - rgb a !! 1, 1 - rgb a !! 2 ]                  
 ------------------------------------------------------------------------------
 -- Ex 9: define a parameterized datatype OneOrTwo that contains one or
 -- two values of the given type. The constructors should be called One and Two.

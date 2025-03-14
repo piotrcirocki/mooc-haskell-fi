@@ -6,6 +6,7 @@
 module Set5a where
 
 import Mooc.Todo
+import GHC.Real (FractionalExponentBase(Base10))
 
 ------------------------------------------------------------------------------
 -- Ex 1: Define the type Vehicle that has four constructors: Bike,
@@ -267,11 +268,15 @@ data Nat = Zero | PlusOne Nat
   deriving (Show,Eq)
 
 fromNat :: Nat -> Int
-fromNat n = todo
+fromNat Zero = 0
+fromNat (PlusOne n) = 1 + fromNat n
 
 toNat :: Int -> Maybe Nat
-toNat z = todo
+toNat 0 = Just Zero
+toNat x = if x > 0 then Just (PlusOne (fromJust (toNat (x -1)))) else Nothing
 
+fromJust (Just x) = x
+fromJust Nothing  = Zero
 ------------------------------------------------------------------------------
 -- Ex 12: While pleasingly simple in its definition, the Nat datatype is not
 -- very efficient computationally. Instead of the unary Peano natural numbers,

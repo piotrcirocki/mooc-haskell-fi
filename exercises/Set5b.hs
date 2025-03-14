@@ -3,6 +3,7 @@
 module Set5b where
 
 import Mooc.Todo
+import Distribution.SPDX (LicenseId(GPL_2_0_only))
 
 -- The next exercises use the binary tree type defined like this:
 
@@ -39,8 +40,8 @@ treeSize (Node a x y) = 1 + treeSize x + treeSize y
 --   treeMax (Node 3 (Node 5 Empty Empty) (Node 4 Empty Empty))  ==>  5
 
 treeMax :: Tree Int -> Int
-treeMax = todo
-
+treeMax Empty = 0
+treeMax (Node a x y) = max a (max (treeMax x) (treeMax y))
 ------------------------------------------------------------------------------
 -- Ex 4: implement a function that checks if all tree values satisfy a
 -- condition.
@@ -51,7 +52,8 @@ treeMax = todo
 --   allValues (>0) (Node 1 Empty (Node 0 Empty Empty))  ==>  False
 
 allValues :: (a -> Bool) -> Tree a -> Bool
-allValues condition tree = todo
+allValues f Empty = True
+allValues f (Node a x y) = f a && allValues f x && allValues f y 
 
 ------------------------------------------------------------------------------
 -- Ex 5: implement map for trees.

@@ -335,10 +335,22 @@ inc (O b) = I b
 inc (I b) = O (inc b)
 
 prettyPrint :: Bin -> String
-prettyPrint = todo
+prettyPrint End = ""
+prettyPrint (O b) = prettyPrint b ++ "0"
+prettyPrint (I b) = prettyPrint b ++ "1"
 
 fromBin :: Bin -> Int
-fromBin = todo
+fromBin b = fromBinHelper b 0
+
+
+fromBinHelper :: Bin -> Int -> Int
+fromBinHelper End _ = 0
+fromBinHelper (I b) n = 2 ^ n + fromBinHelper b (n + 1) 
+fromBinHelper (O b) n = fromBinHelper b (n + 1)
 
 toBin :: Int -> Bin
-toBin = todo
+toBin 0 = O End
+toBin 1 = I End
+toBin x = case divMod x 2 of
+            (y, 1) -> I (toBin y)
+            (z, 0) -> O (toBin z)

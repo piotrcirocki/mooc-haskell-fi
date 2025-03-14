@@ -96,11 +96,11 @@ setAge age (MkPerson name oldAge) = MkPerson name age
 --   getY (up (up origin))    ==> 2
 --   getX (up (right origin)) ==> 1
 
-data Position = Empty | Node Int Int Position
+data Position = EmptyPos | Node Int Int Position
 
 -- origin is a Position value with x and y set to 0
 origin :: Position
-origin  = Node 0 0 Empty  
+origin  = Node 0 0 EmptyPos  
 
 -- getX returns the x of a Position
 getX :: Position -> Int
@@ -112,11 +112,11 @@ getY  (Node x y _) = y
 
 -- up increases the y value of a position by one
 up :: Position -> Position
-up (Node x y _) = Node x (y+1) Empty 
+up (Node x y _) = Node x (y+1) EmptyPos 
 
 -- right increases the x value of a position by one
 right :: Position -> Position
-right (Node x y _) = Node (x +1) y Empty 
+right (Node x y _) = Node (x +1) y EmptyPos 
 
 ------------------------------------------------------------------------------
 -- Ex 6: Here's a datatype that represents a student. A student can
@@ -241,15 +241,17 @@ data OneOrTwo a  = One a | Two a a
 -- Also define the functions toList and fromList that convert between
 -- KeyVals and lists of pairs.
 
-data KeyVals k v = KeyValsUndefined
+data KeyVals k v = Empty | Pair k v (KeyVals k v)
   deriving Show
 
 toList :: KeyVals k v -> [(k,v)]
-toList = todo
+toList (Pair k v rest) = (k, v) : toList rest 
+toList Empty = []
+
 
 fromList :: [(k,v)] -> KeyVals k v
-fromList = todo
-
+fromList ((k,v) : rest) = Pair k v (fromList rest)
+fromList [] = Empty 
 ------------------------------------------------------------------------------
 -- Ex 11: The data type Nat is the so called Peano
 -- representation for natural numbers. Define functions fromNat and

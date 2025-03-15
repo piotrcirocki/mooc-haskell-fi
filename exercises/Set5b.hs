@@ -188,15 +188,23 @@ walk (x:xs) (Node a l r) | x == StepL = walk xs l
 --   set [] 1 (Node 0 Empty Empty)  ==>  (Node 1 Empty Empty)
 --   set [StepL,StepL] 1 (Node 0 (Node 0 (Node 0 Empty Empty)
 --                                       (Node 0 Empty Empty))
---                               (Node 0 Empty Empty))
+--                               (Node 0 Empty Empty)) 
 --                  ==>  (Node 0 (Node 0 (Node 1 Empty Empty)
 --                                       (Node 0 Empty Empty))
 --                               (Node 0 Empty Empty))
 --
 --   set [StepL,StepR] 1 (Node 0 Empty Empty)  ==>  (Node 0 Empty Empty)
 
+-- set [StepL] True (Node False (Node False Empty Empty) Empty)
+--   Expected: Node False (Node True Empty Empty) Empty
+--   Was: Node True Empty Empty
+  
 set :: [Step] -> a -> Tree a -> Tree a
-set path val tree = todo
+set path val Empty = Empty
+set [] val (Node a l r) = Node val l r
+set (x:xs) val (Node a l r) | x == StepL = Node a (set xs val l) r
+                            | x == StepR = Node a l (set xs val r)
+                            | otherwise = Node a l r
 
 ------------------------------------------------------------------------------
 -- Ex 10: given a value and a tree, return a path that goes from the

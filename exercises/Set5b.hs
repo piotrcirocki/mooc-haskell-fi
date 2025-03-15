@@ -65,8 +65,8 @@ allValues f (Node a x y) = f a && allValues f x && allValues f y
 --   ==> (Node 2 (Node 3 Empty Empty) (Node 4 Empty Empty))
 
 mapTree :: (a -> b) -> Tree a -> Tree b
-mapTree f t = todo
-
+mapTree f Empty = Empty
+mapTree f (Node a x y) = Node (f a) (mapTree f x) (mapTree f y)
 ------------------------------------------------------------------------------
 -- Ex 6: given a value and a tree, build a new tree that is the same,
 -- except all nodes that contain the value have been removed. Also
@@ -109,7 +109,8 @@ mapTree f t = todo
 --                 (Node 3 Empty Empty))
 
 cull :: Eq a => a -> Tree a -> Tree a
-cull val tree = todo
+--cull val tree = todo
+cull val Empty = Empty
 
 ------------------------------------------------------------------------------
 -- Ex 7: check if a tree is ordered. A tree is ordered if:

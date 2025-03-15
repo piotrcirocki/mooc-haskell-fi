@@ -16,7 +16,7 @@ data Tree a = Empty | Node a (Tree a) (Tree a)
 -- because the tree might be empty (i.e. just a Empty)
 
 valAtRoot :: Tree a -> Maybe a
-valAtRoot Empty = Nothing 
+valAtRoot Empty = Nothing
 valAtRoot (Node a _ _) = Just a
 
 ------------------------------------------------------------------------------
@@ -29,7 +29,7 @@ valAtRoot (Node a _ _) = Just a
 
 treeSize :: Tree a -> Int
 treeSize Empty = 0
-treeSize (Node a x y) = 1 + treeSize x + treeSize y 
+treeSize (Node a x y) = 1 + treeSize x + treeSize y
 
 ------------------------------------------------------------------------------
 -- Ex 3: get the largest value in a tree of positive Ints. The
@@ -53,7 +53,7 @@ treeMax (Node a x y) = max a (max (treeMax x) (treeMax y))
 
 allValues :: (a -> Bool) -> Tree a -> Bool
 allValues f Empty = True
-allValues f (Node a x y) = f a && allValues f x && allValues f y 
+allValues f (Node a x y) = f a && allValues f x && allValues f y
 
 ------------------------------------------------------------------------------
 -- Ex 5: implement map for trees.
@@ -109,9 +109,8 @@ mapTree f (Node a x y) = Node (f a) (mapTree f x) (mapTree f y)
 --                 (Node 3 Empty Empty))
 
 cull :: Eq a => a -> Tree a -> Tree a
---cull val tree = todo
 cull val Empty = Empty
-
+cull val (Node a x y) = if a == val then Empty else Node a (cull val x) (cull val y)
 ------------------------------------------------------------------------------
 -- Ex 7: check if a tree is ordered. A tree is ordered if:
 --  * all values to the left of the root are smaller than the root value
@@ -152,7 +151,8 @@ cull val Empty = Empty
 --                     (Node 3 Empty Empty))   ==>   True
 
 isOrdered :: Ord a => Tree a -> Bool
-isOrdered = todo
+isOrdered Empty = True
+isOrdered (Node a x y) = allValues (<a) x && allValues (>a) y && isOrdered x && isOrdered y
 
 ------------------------------------------------------------------------------
 -- Ex 8: a path in a tree can be represented as a list of steps that

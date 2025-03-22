@@ -187,14 +187,14 @@ walk (x:xs) (Node a l r) | x == StepL = walk xs l
 -- Examples:
 --   set [] 1 (Node 0 Empty Empty)  ==>  (Node 1 Empty Empty)
 --   set [StepL,StepL] 1 (Node 0 (Node 0 (Node 0 Empty Empty)
---                                       (Node 0 Empty Empty))
+ --                                       (Node 0 Empty Empty))
 --                               (Node 0 Empty Empty)) 
 --                  ==>  (Node 0 (Node 0 (Node 1 Empty Empty)
 --                                       (Node 0 Empty Empty))
 --                               (Node 0 Empty Empty))
 --
 --   set [StepL,StepR] 1 (Node 0 Empty Empty)  ==>  (Node 0 Empty Empty)
-
+ 
 -- set [StepL] True (Node False (Node False Empty Empty) Empty)
 --   Expected: Node False (Node True Empty Empty) Empty
 --   Was: Node True Empty Empty
@@ -219,5 +219,24 @@ set (x:xs) val (Node a l r) | x == StepL = Node a (set xs val l) r
 --                            (Node 1 Empty Empty))
 --                    (Node 5 Empty Empty))                     ==>  Just [StepL,StepR]
 
-search :: Eq a => a -> Tree a -> Maybe [Step]
-search = todo
+-- search1 :: (Ord a, Eq a) => a -> Tree a -> [Step] -> [Step]
+-- search1 val Empty arr = []
+-- search1 val (Node a l r) arr | a == val = arr
+--                              | 
+search :: (Ord a, Eq a) => a -> Tree a -> Maybe[Step]
+search val Empty = Nothing
+search val (Node a l r) = if val == a then Just [] else
+                            case anyValues (== val) l of
+                                True ->  Just (StepL : fromJust1 (search val l))
+                                False -> case anyValues (== val) r of
+                                           True -> Just (StepR:  fromJust1 (search val r))
+                                           False -> Nothing
+
+
+anyValues :: (a -> Bool) -> Tree a -> Bool
+anyValues f Empty = False
+anyValues f (Node a x y) = f a || anyValues f x || anyValues f y
+
+fromJust1 :: Maybe [a] -> [a]
+fromJust1 (Just x) = x
+fromJust1 Nothing = []

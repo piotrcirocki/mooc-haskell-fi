@@ -17,8 +17,8 @@ instance Eq Country where
   Finland == Finland = True
   Switzerland == Switzerland = True
   Norway == Norway = True
-  _ == _ = False 
-  
+  _ == _ = False
+
 
 ------------------------------------------------------------------------------
 -- Ex 2: implement an Ord instance for Country so that
@@ -60,8 +60,15 @@ instance Ord Country where
 data Name = Name String
   deriving Show
 
+makeLower :: Name -> Name
+makeLower (Name x) = Name (map toLower x)
+
 instance Eq Name where
-  (==) = todo
+  -- (==) a b | makeLower a == makeLower b = True 
+  --          | otherwise = False 
+  (==) ::  Name -> Name -> Bool
+  --Name x == Name y = compare (map toLower x)  (map toLower y) == EQ
+  (==) (Name x) (Name y) =  compare (map toLower x)  (map toLower y) == EQ
 
 ------------------------------------------------------------------------------
 -- Ex 4: here is a list type parameterized over the type it contains.
@@ -74,9 +81,15 @@ instance Eq Name where
 data List a = Empty | LNode a (List a)
   deriving Show
 
-instance Eq a => Eq (List a) where
-  (==) = todo
-
+instance (Eq a, Ord a) => Eq (List a) where
+--  (==) = todo
+ (==) Empty Empty = True
+ (==) Empty _ = False
+ (==) _ Empty = False
+ (==) (LNode x c) (LNode y d) = case compare x y of
+                                  EQ -> (==) c d
+                                  LT -> False
+                                  GT -> False 
 ------------------------------------------------------------------------------
 -- Ex 5: below you'll find two datatypes, Egg and Milk. Implement a
 -- type class Price, containing a function price. The price function

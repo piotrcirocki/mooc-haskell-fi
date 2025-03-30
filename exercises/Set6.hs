@@ -179,7 +179,14 @@ addEgg ChickenEgg count  =  count  + 20
 data Number = Finite Integer | Infinite
   deriving (Show,Eq)
 
+instance Ord Number where
+  compare :: Number -> Number -> Ordering
+  compare (Finite x) (Finite y ) = x `compare` y 
+  compare Infinite Infinite = EQ
+  compare Infinite a = GT
+  compare (Finite a) Infinite = LT
 
+  
 ------------------------------------------------------------------------------
 -- Ex 8: rational numbers have a numerator and a denominator that are
 -- integers, usually separated by a horizontal bar or a slash:

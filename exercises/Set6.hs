@@ -4,6 +4,7 @@ module Set6 where
 
 import Mooc.Todo
 import Data.Char (toLower)
+import Distribution.SPDX (LicenseId(GPL_2_0_only))
 
 ------------------------------------------------------------------------------
 -- Ex 1: define an Eq instance for the type Country below. You'll need
@@ -89,7 +90,7 @@ instance (Eq a, Ord a) => Eq (List a) where
  (==) (LNode x c) (LNode y d) = case compare x y of
                                   EQ -> (==) c d
                                   LT -> False
-                                  GT -> False 
+                                  GT -> False
 ------------------------------------------------------------------------------
 -- Ex 5: below you'll find two datatypes, Egg and Milk. Implement a
 -- type class Price, containing a function price. The price function
@@ -111,7 +112,7 @@ data Milk = Milk Int -- amount in litres
 class Price a where
   price :: a -> Int
 
-instance Price Egg where 
+instance Price Egg where
   price (ChickenEgg) = 20
   price ChocolateEgg = 30
 
@@ -127,6 +128,46 @@ instance Price Milk where
 -- price [Just ChocolateEgg, Nothing, Just ChickenEgg]  ==> 50
 -- price [Nothing, Nothing, Just (Milk 1), Just (Milk 2)]  ==> 45
 
+instance Price (Maybe Egg) where
+  price Nothing = 0
+  price (Just ChickenEgg) = 20
+  price (Just ChocolateEgg) = 30
+
+instance Price [Maybe Egg] where
+  price :: [Maybe Egg] -> Int
+  price = foldr countEggs 0
+
+instance Price (Maybe Milk) where
+  price Nothing = 0
+  price (Just (Milk a)) = a *  15
+
+countEggs :: Maybe Egg -> Int -> Int
+countEggs Nothing count =  count
+countEggs (Just ChickenEgg) count  =  count +  20
+countEggs (Just ChocolateEgg) count  = count + 30
+
+countMilk :: Maybe Milk -> Int -> Int
+countMilk Nothing count = count
+countMilk (Just (Milk a)) count  = count +  a * 15
+
+instance Price [Maybe Milk] where
+  price :: [Maybe Milk] -> Int
+  price = foldr countMilk 0
+
+instance Price  [Milk] where
+  price = foldr addMilk 0
+
+addMilk ::  Milk -> Int -> Int
+addMilk (Milk a) count  =  count  + a * 15
+
+
+instance Price  [Egg] where
+  price = foldr addEgg 0
+
+
+addEgg ::  Egg -> Int -> Int
+addEgg ChocolateEgg count  =  count  + 30
+addEgg ChickenEgg count  =  count  + 20
 
 ------------------------------------------------------------------------------
 -- Ex 7: below you'll find the datatype Number, which is either an

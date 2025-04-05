@@ -5,6 +5,7 @@ module Set6 where
 import Mooc.Todo
 import Data.Char (toLower)
 import Distribution.SPDX (LicenseId(GPL_2_0_only))
+import Data.Text.Array (equal)
 
 ------------------------------------------------------------------------------
 -- Ex 1: define an Eq instance for the type Country below. You'll need
@@ -211,9 +212,9 @@ data RationalNumber = RationalNumber Integer Integer
   deriving Show
 
 instance Eq RationalNumber where
-  p == q = todo
+  (RationalNumber a b) == (RationalNumber c d) = compare (a*d) (b*c) == EQ
 
-------------------------------------------------------------------------------
+-------------------------------    -----------------------------------------------
 -- Ex 9: implement the function simplify, which simplifies a rational
 -- number by removing common factors of the numerator and denominator.
 -- In other words,

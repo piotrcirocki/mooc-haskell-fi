@@ -182,12 +182,12 @@ data Number = Finite Integer | Infinite
 
 instance Ord Number where
   compare :: Number -> Number -> Ordering
-  compare (Finite x) (Finite y ) = x `compare` y 
+  compare (Finite x) (Finite y ) = x `compare` y
   compare Infinite Infinite = EQ
   compare Infinite a = GT
   compare (Finite a) Infinite = LT
 
-  
+
 ------------------------------------------------------------------------------
 -- Ex 8: rational numbers have a numerator and a denominator that are
 -- integers, usually separated by a horizontal bar or a slash:
@@ -232,7 +232,8 @@ instance Eq RationalNumber where
 -- Hint: Remember the function gcd?
 
 simplify :: RationalNumber -> RationalNumber
-simplify p = todo
+simplify (RationalNumber a b) = RationalNumber (a `div` gcn) (b `div` gcn)
+       where gcn = gcd a b
 
 ------------------------------------------------------------------------------
 -- Ex 10: implement the typeclass Num for RationalNumber. The results
@@ -253,13 +254,23 @@ simplify p = todo
 --   signum (RationalNumber 0 2)             ==> RationalNumber 0 1
 
 instance Num RationalNumber where
-  p + q = todo
-  p * q = todo
-  abs q = todo
-  signum q = todo
-  fromInteger x = todo
-  negate q = todo
+  p + q = returnRational p q  
+  (RationalNumber a b) * (RationalNumber c d) = simplify $ RationalNumber (product [a, c]) (product [b, d])
+  abs :: RationalNumber -> RationalNumber
+  abs (RationalNumber x y ) = RationalNumber (abs x) (abs y)
+  signum (RationalNumber x y) = RationalNumber (makeSign x) (makeSign y)
+  fromInteger :: Integer -> RationalNumber
+  fromInteger x = RationalNumber x 1
+  negate (RationalNumber x y) =  RationalNumber (-1*x) y
 
+
+makeSign x | x > 0 = 1
+           | x == 0 = 0
+           | otherwise = -1
+
+returnRational (RationalNumber a b) (RationalNumber c d ) =
+  simplify $ RationalNumber (sum [a * d, b*c]) (b*d)
+ 
 ------------------------------------------------------------------------------
 -- Ex 11: a class for adding things. Define a class Addable with a
 -- constant `zero` and a function `add`. Define instances of Addable
@@ -271,7 +282,7 @@ instance Num RationalNumber where
 --   add 1 2                ==>  3
 --   add 1 zero             ==>  1
 --   add [1,2] [3,4]        ==>  [1,2,3,4]
---   add zero [True,False]  ==>  [True,False]
+--   add zero [True,PiotrFalse]  ==>  [True,False]
 
 
 ------------------------------------------------------------------------------
@@ -303,4 +314,3 @@ data Color = Red | Green | Blue
   deriving (Show, Eq)
 data Suit = Club | Spade | Diamond | Heart
   deriving (Show, Eq)
-

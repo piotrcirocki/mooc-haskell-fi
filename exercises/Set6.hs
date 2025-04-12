@@ -6,7 +6,9 @@ import Mooc.Todo
 import Data.Char (toLower)
 import Distribution.SPDX (LicenseId(GPL_2_0_only))
 import Data.Text.Array (equal)
-
+import GHC.Generics (Constructor)
+import Data.List
+import Data.Maybe
 ------------------------------------------------------------------------------
 -- Ex 1: define an Eq instance for the type Country below. You'll need
 -- to use pattern matching.
@@ -254,7 +256,7 @@ simplify (RationalNumber a b) = RationalNumber (a `div` gcn) (b `div` gcn)
 --   signum (RationalNumber 0 2)             ==> RationalNumber 0 1
 
 instance Num RationalNumber where
-  p + q = returnRational p q  
+  p + q = returnRational p q
   (RationalNumber a b) * (RationalNumber c d) = simplify $ RationalNumber (product [a, c]) (product [b, d])
   abs :: RationalNumber -> RationalNumber
   abs (RationalNumber x y ) = RationalNumber (abs x) (abs y)
@@ -270,7 +272,7 @@ makeSign x | x > 0 = 1
 
 returnRational (RationalNumber a b) (RationalNumber c d ) =
   simplify $ RationalNumber (sum [a * d, b*c]) (b*d)
- 
+
 ------------------------------------------------------------------------------
 -- Ex 11: a class for adding things. Define a class Addable with a
 -- constant `zero` and a function `add`. Define instances of Addable
@@ -291,7 +293,7 @@ class Addable a where
 instance Addable Integer where
   zero = 0
   add :: Integer -> Integer -> Integer
-  add a b = a + b 
+  add a b = a + b
 
 instance Addable [a] where
   zero = []
@@ -326,3 +328,40 @@ data Color = Red | Green | Blue
   deriving (Show, Eq)
 data Suit = Club | Spade | Diamond | Heart
   deriving (Show, Eq)
+
+fromIntToData :: Int -> a -> a
+fromIntToData x b = b
+
+class Cycle a where
+  step :: a -> a
+  step a = a
+  stepMany :: Int -> a -> a
+  stepMany n x = iterate step x !! n
+
+chooseNextSuit :: Int -> Suit -> Suit
+chooseNextSuit n col = [Club, Spade, Diamond, Heart] !! (((fromJust $ elemIndex col [Club, Spade, Diamond, Heart]) + n) `mod` 4)
+
+chooseNextColor :: Int -> Color -> Color
+chooseNextColor n col = [Red, Green, Blue] !! (((fromJust $ elemIndex col [Red, Green, Blue]) + n) `mod` 3)
+
+
+instance Cycle Color where
+  step :: Color -> Color
+  step Red = Green
+  step Green = Blue
+  step Blue = Red
+
+  stepMany :: Int -> Color -> Color
+  stepMany n color = chooseNextColor n color 
+
+
+instance Cycle Suit where
+  step :: Suit -> Suit
+  step Club = Spade
+  step Spade = Diamond
+  step Diamond = Heart
+  step Heart = Club
+  
+  stepMany :: Int -> Suit -> Suit
+  stepMany n color = chooseNextSuit n color 
+

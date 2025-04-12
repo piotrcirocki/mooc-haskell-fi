@@ -282,8 +282,20 @@ returnRational (RationalNumber a b) (RationalNumber c d ) =
 --   add 1 2                ==>  3
 --   add 1 zero             ==>  1
 --   add [1,2] [3,4]        ==>  [1,2,3,4]
---   add zero [True,PiotrFalse]  ==>  [True,False]
+--   add zero [True,False]  ==>  [True,False]
+class Addable a where
+  add :: a -> a -> a
+  zero :: a
+  zero = zero
 
+instance Addable Integer where
+  zero = 0
+  add :: Integer -> Integer -> Integer
+  add a b = a + b 
+
+instance Addable [a] where
+  zero = []
+  add a b = a ++ b
 
 ------------------------------------------------------------------------------
 -- Ex 12: cycling. Implement a type class Cycle that contains a

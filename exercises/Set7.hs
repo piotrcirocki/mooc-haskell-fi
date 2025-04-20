@@ -92,10 +92,33 @@ add a (Set b)  = if member a (Set b) then Set b else Set (sort $ b ++ [a])
 data Event = AddEggs | AddFlour | AddSugar | Mix | Bake
   deriving (Eq,Show)
 
-data State = Start | Error | Finished
+data State = Start | EggsAdded | FlourAdded | SugarAdded | FlourAndSugarAdded | Mixed | Baked |  Error | Finished
   deriving (Eq,Show)
 
-step = todo
+step :: State -> Event -> State
+step Start AddEggs = EggsAdded
+step Start _  = Error
+step EggsAdded AddFlour = FlourAdded
+step EggsAdded AddSugar = SugarAdded
+step EggsAdded _ = Error
+
+step FlourAdded AddFlour = Error
+step FlourAdded AddSugar = FlourAndSugarAdded
+step FlourAdded _ = Error 
+
+step SugarAdded AddSugar = Error
+step SugarAdded AddFlour = FlourAndSugarAdded
+step SugarAdded _ = Error
+
+step FlourAndSugarAdded Mix = Mixed
+step FlourAndSugarAdded _ = Error
+
+step Mixed Bake = Finished
+step Mixed _ = Error
+
+step Finished _ = Finished 
+
+step Error _ = Error  
 
 -- do not edit this
 bake :: [Event] -> State

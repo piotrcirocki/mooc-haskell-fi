@@ -7,6 +7,7 @@ import Data.List
 import Data.List.NonEmpty (NonEmpty ((:|)))
 import Data.Monoid
 import Data.Semigroup
+import Distribution.Compat.NonEmptySet (toNonEmpty)
 
 ------------------------------------------------------------------------------
 -- Ex 1: you'll find below the types Time, Distance and Velocity,
@@ -104,7 +105,7 @@ step EggsAdded _ = Error
 
 step FlourAdded AddFlour = Error
 step FlourAdded AddSugar = FlourAndSugarAdded
-step FlourAdded _ = Error 
+step FlourAdded _ = Error
 
 step SugarAdded AddSugar = Error
 step SugarAdded AddFlour = FlourAndSugarAdded
@@ -116,9 +117,9 @@ step FlourAndSugarAdded _ = Error
 step Mixed Bake = Finished
 step Mixed _ = Error
 
-step Finished _ = Finished 
+step Finished _ = Finished
 
-step Error _ = Error  
+step Error _ = Error
 
 -- do not edit this
 bake :: [Event] -> State
@@ -138,15 +139,28 @@ bake events = go Start events
 --   average (1.0 :| [2.0,3.0])  ==>  2.0
 
 average :: Fractional a => NonEmpty a -> a
-average = todo
+average a = sum a / fromIntegral (length a)
 
 ------------------------------------------------------------------------------
 -- Ex 5: reverse a NonEmpty list.
 --
 -- PS. The Data.List.NonEmpty type has been imported for you
 
+-- customReverse :: [a] -> [a]
+-- customReverse []     = []
+-- customReverse (x:xs) = customReverse xs ++ [x]
+
 reverseNonEmpty :: NonEmpty a -> NonEmpty a
-reverseNonEmpty = todo
+--reverseNonEmpty (x :| [xs]) = xs :| [x]
+reverseNonEmpty = reverse1 []
+
+
+reverse1 ::  [a] -> NonEmpty a -> NonEmpty a
+reverse1 acc (x :| []) =   x :| acc
+reverse1 acc (x :| xs) = reverse1 (x : acc) (toNonEmptyLst xs)
+
+toNonEmptyLst :: [a] -> NonEmpty a
+toNonEmptyLst (x:xs) = x :| xs
 
 ------------------------------------------------------------------------------
 -- Ex 6: implement Semigroup instances for the Distance, Time and

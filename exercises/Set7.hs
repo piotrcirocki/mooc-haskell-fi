@@ -187,7 +187,7 @@ instance (Eq a, Ord a) =>  Semigroup (Set a) where
   (Set x) <> (Set y) =  Set ( sort $ nub $  x ++ y)  -- Set (x + y)
 
 instance (Eq a, Ord a) => Monoid (Set a) where
-  mempty = Set []  
+  mempty = Set []
 
 ------------------------------------------------------------------------------
 -- Ex 8: below you'll find two different ways of representing
@@ -275,7 +275,18 @@ data PasswordRequirement =
   deriving Show
 
 passwordAllowed :: String -> PasswordRequirement -> Bool
-passwordAllowed = todo
+
+passwordAllowed str (MinimumLength i) = length str >= i 
+
+passwordAllowed [] (ContainsSome str) = False
+passwordAllowed (x:xs)  (ContainsSome str) = (x `elem` str) || passwordAllowed xs (ContainsSome str)
+
+passwordAllowed [] (DoesNotContain str) = True
+passwordAllowed (x:xs)  (DoesNotContain str) = notElem x str && passwordAllowed xs (DoesNotContain str)
+
+passwordAllowed str (And x y ) = passwordAllowed str x && passwordAllowed str y
+passwordAllowed str (Or x y ) = passwordAllowed str x || passwordAllowed str y
+
 
 ------------------------------------------------------------------------------
 -- Ex 10: a DSL for simple arithmetic expressions with addition and

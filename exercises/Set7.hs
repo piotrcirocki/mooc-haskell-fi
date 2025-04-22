@@ -146,14 +146,8 @@ average a = sum a / fromIntegral (length a)
 --
 -- PS. The Data.List.NonEmpty type has been imported for you
 
--- customReverse :: [a] -> [a]
--- customReverse []     = []
--- customReverse (x:xs) = customReverse xs ++ [x]
-
 reverseNonEmpty :: NonEmpty a -> NonEmpty a
---reverseNonEmpty (x :| [xs]) = xs :| [x]
 reverseNonEmpty = reverse1 []
-
 
 reverse1 ::  [a] -> NonEmpty a -> NonEmpty a
 reverse1 acc (x :| []) =   x :| acc
@@ -172,6 +166,14 @@ toNonEmptyLst (x:xs) = x :| xs
 -- velocity (Distance 50 <> Distance 10) (Time 1 <> Time 2)
 --    ==> Velocity 20
 
+instance  Semigroup (Distance) where
+  Distance a <> Distance b = Distance (a + b)
+
+instance  Semigroup (Time) where
+  Time a <> Time b = Time  (a + b)
+
+instance  Semigroup (Velocity) where
+  Velocity a <> Velocity b = Velocity (a + b)
 
 ------------------------------------------------------------------------------
 -- Ex 7: implement a Monoid instance for the Set type from exercise 2.
@@ -181,6 +183,11 @@ toNonEmptyLst (x:xs) = x :| xs
 --
 -- What are the class constraints for the instances?
 
+instance (Eq a, Ord a) =>  Semigroup (Set a) where
+  (Set x) <> (Set y) =  Set ( sort $ nub $  x ++ y)  -- Set (x + y)
+
+instance (Eq a, Ord a) => Monoid (Set a) where
+  mempty = Set []  
 
 ------------------------------------------------------------------------------
 -- Ex 8: below you'll find two different ways of representing
@@ -203,29 +210,43 @@ toNonEmptyLst (x:xs) = x :| xs
 
 data Operation1 = Add1 Int Int
                 | Subtract1 Int Int
+                | Multiply1 Int Int
   deriving Show
 
 compute1 :: Operation1 -> Int
 compute1 (Add1 i j) = i+j
 compute1 (Subtract1 i j) = i-j
+compute1 (Multiply1 i j) = i*j
 
 show1 :: Operation1 -> String
-show1 = todo
+show1 (Add1 i j) = show i ++ "+" ++ show j
+show1 (Subtract1 i j) = show i ++  "-" ++ show j
+show1 (Multiply1 i j) = show i ++  "*" ++ show j
 
 data Add2 = Add2 Int Int
   deriving Show
+
 data Subtract2 = Subtract2 Int Int
+  deriving Show
+
+data Multiply2 = Multiply2 Int Int
   deriving Show
 
 class Operation2 op where
   compute2 :: op -> Int
+  show2 :: op -> String
 
 instance Operation2 Add2 where
   compute2 (Add2 i j) = i+j
+  show2 (Add2 i j) = show i ++  "+" ++ show j
 
 instance Operation2 Subtract2 where
   compute2 (Subtract2 i j) = i-j
+  show2 (Subtract2 i j) = show i ++  "-" ++ show j
 
+instance Operation2 Multiply2 where
+  compute2 (Multiply2 i j) = i*j
+  show2 (Multiply2 i j) = show i ++  "*" ++ show j
 
 ------------------------------------------------------------------------------
 -- Ex 9: validating passwords. Below you'll find a type

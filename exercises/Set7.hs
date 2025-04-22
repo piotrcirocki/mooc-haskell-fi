@@ -276,7 +276,7 @@ data PasswordRequirement =
 
 passwordAllowed :: String -> PasswordRequirement -> Bool
 
-passwordAllowed str (MinimumLength i) = length str >= i 
+passwordAllowed str (MinimumLength i) = length str >= i
 
 passwordAllowed [] (ContainsSome str) = False
 passwordAllowed (x:xs)  (ContainsSome str) = (x `elem` str) || passwordAllowed xs (ContainsSome str)
@@ -308,17 +308,25 @@ passwordAllowed str (Or x y ) = passwordAllowed str x || passwordAllowed str y
 --     ==> "(3*(1+1))"
 --
 
-data Arithmetic = Todo
+data Arithmetic =  Operation Integer
+                  | Plus Arithmetic Arithmetic
+                  | Multiply Arithmetic Arithmetic
   deriving Show
 
 literal :: Integer -> Arithmetic
-literal = todo
+literal = Operation
 
 operation :: String -> Arithmetic -> Arithmetic -> Arithmetic
-operation = todo
+operation "+" a b = Plus a b
+operation "*" a b = Multiply a b
 
 evaluate :: Arithmetic -> Integer
-evaluate = todo
+evaluate (Plus a b) = evaluate a + evaluate b
+evaluate (Multiply a b) = evaluate a * evaluate b
+evaluate (Operation x) = x
+
 
 render :: Arithmetic -> String
-render = todo
+render  (Plus a b) = "(" ++ render a ++ "+" ++ render b ++ ")"
+render  (Multiply a b) = "(" ++ render a ++ "*" ++ render b ++ ")"
+render  (Operation x) = show x

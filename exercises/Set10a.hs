@@ -36,8 +36,13 @@ doublify x = zip x x >>= \(x,y) -> [x,y]
 --   take 10 (interleave [7,7,7] [1..])    ==> [7,1,7,2,7,3,4,5,6,7]
 --   take 10 (interleave [1..] (repeat 0)) ==> [1,0,2,0,3,0,4,0,5,0]
 
-interleave :: [a] -> [a] -> [a]
-interleave = todo
+interleave :: (Eq a) => [a] -> [a] -> [a]
+interleave x y = (zip x y >>= \(a,b) -> [a,b]) ++ (getChunk x y)
+
+getChunk x y
+  | length x > length y = drop (length y) x
+  | length x < length y = drop (length x) y
+  | otherwise = []
 
 ------------------------------------------------------------------------------
 -- Ex 3: Deal out cards. Given a list of players (strings), and a list

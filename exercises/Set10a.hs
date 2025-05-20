@@ -16,7 +16,7 @@ import Mooc.Todo
 --   take 10 (doublify [0..])  ==>  [0,0,1,1,2,2,3,3,4,4]
 
 doublify :: [a] -> [a]
-doublify = todo
+doublify x = zip x x >>= \(x,y) -> [x,y]
 
 ------------------------------------------------------------------------------
 -- Ex 2: Implement the function interleave that takes two lists and

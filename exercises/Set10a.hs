@@ -47,10 +47,10 @@ getChunk x y
 ------------------------------------------------------------------------------
 -- Ex 3: Deal out cards. Given a list of players (strings), and a list
 -- of cards (strings), deal out the cards to the players in a cycle.
---
+--  
 -- Make sure your function works with infinite inputs as well!
 --
--- Examples:
+--  Examples:
 --   deal ["Hercule","Ariadne"] ["Ace","Joker","Heart"]
 --     ==> [("Ace","Hercule"),("Joker","Ariadne"),("Heart","Hercule")]
 --   take 4 (deal ["a","b","c"] (map show [0..]))
@@ -60,8 +60,14 @@ getChunk x y
 --
 -- Hint: remember the functions cycle and zip?
 
+-- Input: take 10 (cycle [1,2,3])
+-- Output: [1,2,3,1,2,3,1,2,3,1] 
+
+-- Input: zip [1,2,3] [9,8,7]
+-- Output: [(1,9),(2,8),(3,7)] 
+
 deal :: [String] -> [String] -> [(String,String)]
-deal = todo
+deal x y = zip  y (cycle x)
 
 ------------------------------------------------------------------------------
 -- Ex 4: Compute a running average. Go through a list of Doubles and

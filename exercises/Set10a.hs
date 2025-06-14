@@ -82,10 +82,11 @@ deal x y = zip  y (cycle x)
 --   averages [3,2,1] ==> [3.0,2.5,2.0]
 --   take 10 (averages [1..]) ==> [1.0,1.5,2.0,2.5,3.0,3.5,4.0,4.5,5.0,5.5]
 
-
-
 averages :: [Double] -> [Double]
-averages = todo
+averages x = map (avHlp x) $ zip [1 ..] x
+
+avHlp :: [Double] -> (Int, Double) -> Double
+avHlp  arr (idx, val)  = sum (take idx arr) / fromIntegral idx
 
 ------------------------------------------------------------------------------
 -- Ex 5: Given two lists, xs and ys, and an element z, generate an

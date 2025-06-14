@@ -39,6 +39,7 @@ doublify x = zip x x >>= \(x,y) -> [x,y]
 interleave :: (Eq a) => [a] -> [a] -> [a]
 interleave x y = (zip x y >>= \(a,b) -> [a,b]) ++ (getChunk x y)
 
+getChunk :: [a] -> [a] -> [a]
 getChunk x y
   | length x > length y = drop (length y) x
   | length x < length y = drop (length x) y
@@ -104,7 +105,7 @@ avHlp  arr (idx, val)  = sum (take idx arr) / fromIntegral idx
 --   take 10 (alternate [1,2] [3,4,5] 0) ==> [1,2,0,3,4,5,0,1,2,0]
 
 alternate :: [a] -> [a] -> a -> [a]
-alternate xs ys z = todo
+alternate xs ys z = cycle $  xs ++ [z] ++ ys ++ [z] 
 
 ------------------------------------------------------------------------------
 -- Ex 6: Check if the length of a list is at least n. Make sure your
@@ -114,6 +115,9 @@ alternate xs ys z = todo
 --   lengthAtLeast 2 [1,2,3] ==> True
 --   lengthAtLeast 7 [1,2,3] ==> False
 --   lengthAtLeast 10 [0..]  ==> True
+--interleave1 :: (Eq a) => [a] -> [a] -> [a]
+--interleave1 x y z = (zip x z y >>= \(a,b, c) -> [a,b, c])
+
 
 lengthAtLeast :: Int -> [a] -> Bool
 lengthAtLeast = todo

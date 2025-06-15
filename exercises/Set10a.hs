@@ -2,7 +2,7 @@ module Set10a where
 
 import Data.Char
 import Data.List
-
+import Data.List (elemIndex)
 import Mooc.Todo
 
 ------------------------------------------------------------------------------
@@ -105,7 +105,7 @@ avHlp  arr (idx, val)  = sum (take idx arr) / fromIntegral idx
 --   take 10 (alternate [1,2] [3,4,5] 0) ==> [1,2,0,3,4,5,0,1,2,0]
 
 alternate :: [a] -> [a] -> a -> [a]
-alternate xs ys z = cycle $  xs ++ [z] ++ ys ++ [z] 
+alternate xs ys z = cycle $  xs ++ [z] ++ ys ++ [z]
 
 ------------------------------------------------------------------------------
 -- Ex 6: Check if the length of a list is at least n. Make sure your
@@ -115,12 +115,15 @@ alternate xs ys z = cycle $  xs ++ [z] ++ ys ++ [z]
 --   lengthAtLeast 2 [1,2,3] ==> True
 --   lengthAtLeast 7 [1,2,3] ==> False
 --   lengthAtLeast 10 [0..]  ==> True
---interleave1 :: (Eq a) => [a] -> [a] -> [a]
---interleave1 x y z = (zip x z y >>= \(a,b, c) -> [a,b, c])
 
 
 lengthAtLeast :: Int -> [a] -> Bool
-lengthAtLeast = todo
+lengthAtLeast stopper arr  = lengthHelper arr 1 stopper 
+
+lengthHelper [] idx 0 = True
+lengthHelper [] idx stopper = False
+lengthHelper [x] idx stopper = (idx >= stopper)
+lengthHelper (x:xs) idx stopper = if idx < stopper then lengthHelper xs (idx +1) stopper  else True
 
 ------------------------------------------------------------------------------
 -- Ex 7: The function chunks should take in a list, and a number n,

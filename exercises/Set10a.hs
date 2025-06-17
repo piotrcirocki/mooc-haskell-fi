@@ -139,9 +139,22 @@ lengthHelper (x:xs) idx stopper = if idx < stopper then lengthHelper xs (idx +1)
 -- Examples:
 --   chunks 2 [1,2,3,4] ==> [[1,2],[2,3],[3,4]]
 --   take 4 (chunks 3 [0..]) ==> [[0,1,2],[1,2,3],[2,3,4],[3,4,5]]
+-- averages :: [Double] -> [Double]
+-- averages x = map (avHlp x) $ zip [1 ..] x
+
+-- avHlp :: [Double] -> (Int, Double) -> Double
+-- avHlp  arr (idx, val)  = sum (take idx arr) / fromIntegral idx
+
+-- ghci> let arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0]
+-- ghci> drop 2 (take 5 arr)
+-- [3,4,5]
 
 chunks :: Int -> [a] -> [[a]]
-chunks = todo
+chunks chunkPt arr =  filter (\x -> length x == chunkPt) $ map ( chunkHlp arr chunkPt ) $ zip [0..] arr
+ 
+chunkHlp :: [a] -> Int -> (Int, a) -> [a]
+chunkHlp arr chunk  (idx, val) = drop idx (take (chunk + idx) arr)
+
 
 ------------------------------------------------------------------------------
 -- Ex 8: Define a newtype called IgnoreCase, that wraps a value of

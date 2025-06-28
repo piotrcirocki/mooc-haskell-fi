@@ -169,8 +169,13 @@ chunkHlp arr chunk  (idx, val) = drop idx (take (chunk + idx) arr)
 -- Examples:
 --   ignorecase "abC" == ignorecase "ABc"  ==>  True
 --   ignorecase "acC" == ignorecase "ABc"  ==>  False
+newtype IgnoreCase = IgnoreC String
 
-ignorecase = todo
+instance Eq IgnoreCase where
+  (==)  ::  IgnoreCase -> IgnoreCase -> Bool
+  (==) (IgnoreC x) (IgnoreC y) = compare (map toLower x) (map toLower y) == EQ 
+    
+ignorecase x = IgnoreC x
 
 ------------------------------------------------------------------------------
 -- Ex 9: Here's the Room type and some helper functions from the

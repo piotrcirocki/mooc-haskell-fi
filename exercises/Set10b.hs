@@ -21,8 +21,39 @@ import Mooc.Todo
 --   undefined ||| True  ==> True
 --   False ||| undefined ==> an error!
 
+-- The call seq a b evaluates to b but forces a into WHNF.
+
+-- Prelude> seq (not True) 3
+-- 3
+-- Prelude> seq undefined 3
+-- *** Exception: Prelude.undefined
+-- Prelude> (seq (not True) 3) + 7
+-- 10
+-- Prelude> (seq undefined 3) + 7
+-- *** Exception: Prelude.undefined
+-- Prelude> let f x = f x in seq (f 3) 3
+-- -- ...infinite recursion
+
+-- not :: Bool -> Bool
+-- not True = False
+-- not False = True
+
+-- (||) :: Bool -> Bool -> Bool
+-- True || _ = True
+-- _    || x = x
+
+-- even :: Int -> Bool
+-- even x  =  (x == 0)  ||  not (even (x-1))
+
+-- (|||) :: Bool -> Bool -> Bool
+-- (|||) _ True = True 
+-- (|||) True False = True
+-- (|||) False False = False 
+
 (|||) :: Bool -> Bool -> Bool
-x ||| y = todo
+_ ||| True = True 
+True ||| False = True
+False ||| False = False 
 
 ------------------------------------------------------------------------------
 -- Ex 2: Define the function boolLength, that returns the length of a

@@ -70,7 +70,7 @@ boolLength :: [Bool] -> Int
 boolLength [] = 0 
 boolLength [x] = boolCheck x + 1  
 boolLength (x:xs) = 1 + boolCheck x + boolLength xs
-
+--if  then y else y --if x == x then y else y
 boolCheck :: Bool -> Int
 boolCheck x = if x then 0 else 0
 
@@ -118,12 +118,15 @@ validate predicate value = if predicate value then value else value
 
 class MySeq a where
   myseq :: a -> b -> b
-
+--isInt x = x == fromInteger (round x)
 instance MySeq Bool where
-  myseq = todo
+  myseq x y = if x then y else y
 
 instance MySeq Int where
-  myseq = todo
+  myseq 0 y = y
+  myseq _ y = y
 
 instance MySeq [a] where
-  myseq = todo
+  myseq (x:d) y = y
+  myseq x y = y
+

@@ -63,7 +63,11 @@ greet2 = do
 --   ["alice","bob","carl"]
 
 readWords :: Int -> IO [String]
-readWords n = todo
+readWords 0 = return []
+readWords n = do
+  i <- getLine
+  nextWord <- readWords (n-1)
+  return $ sort (i:nextWord)
 
 ------------------------------------------------------------------------------
 -- Ex 5: define the IO operation readUntil f, which reads lines from

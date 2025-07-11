@@ -86,9 +86,9 @@ readWords n = do
 readUntil :: (String -> Bool) -> IO [String]
 readUntil f = do
   readUntilHelper f []
-  
+
 readUntilHelper :: (String -> Bool) -> [String] -> IO [String]
-readUntilHelper f xs = do 
+readUntilHelper f xs = do
   i <- getLine
   if f i then return $ reverse xs else readUntilHelper f (i:xs)
 
@@ -96,9 +96,9 @@ readUntilHelper f xs = do
 -- Ex 6: given n, print the numbers from n to 0, one per line
 
 countdownPrint :: Int -> IO ()
-countdownPrint 0 = putStrLn $ show 0
+countdownPrint 0 = print 0
 countdownPrint n = do
-  putStrLn $ (show n)
+  print n
   countdownPrint (n-1)
 
 ------------------------------------------------------------------------------
@@ -114,8 +114,15 @@ countdownPrint n = do
 --   5. produces 9
 
 isums :: Int -> IO Int
-isums n = todo
+isums n = isumHelper n 0 1 
 
+isumHelper :: Int -> Int -> Int -> IO Int 
+isumHelper 0 sum counter = return 0 
+isumHelper n sum counter = do
+  i <- readLn
+  print $ sum + i 
+  if counter == n then return $ sum+i  else  isumHelper n (sum + i) (counter + 1)
+  
 ------------------------------------------------------------------------------
 -- Ex 8: when is a useful function, but its first argument has type
 -- Bool. Write a function that behaves similarly but the first

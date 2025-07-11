@@ -91,11 +91,15 @@ readUntilHelper :: (String -> Bool) -> [String] -> IO [String]
 readUntilHelper f xs = do 
   i <- getLine
   if f i then return $ reverse xs else readUntilHelper f (i:xs)
+
 ------------------------------------------------------------------------------
 -- Ex 6: given n, print the numbers from n to 0, one per line
 
 countdownPrint :: Int -> IO ()
-countdownPrint n = todo
+countdownPrint 0 = putStrLn $ show 0
+countdownPrint n = do
+  putStrLn $ (show n)
+  countdownPrint (n-1)
 
 ------------------------------------------------------------------------------
 -- Ex 7: isums n should read n numbers from the user (one per line) and

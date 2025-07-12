@@ -6,6 +6,7 @@ import System.IO
 
 import Mooc.Todo
 
+
 -- Lecture 11:
 --   * The IO type
 --   * do-notation
@@ -177,4 +178,8 @@ while cond op = do
 --     4. returns the line read from the user
 
 debug :: String -> IO a -> IO a
-debug s op = todo
+debug s op = do
+  putStrLn s
+  o <- op
+  putStrLn s
+  return o

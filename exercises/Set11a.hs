@@ -121,7 +121,7 @@ isumHelper 0 sum counter = return 0
 isumHelper n sum counter = do
   i <- readLn
   print $ sum + i 
-  if counter == n then return $ sum+i  else  isumHelper n (sum + i) (counter + 1)
+  if counter == n then return $ sum + i  else  isumHelper n (sum + i) (counter + 1)
   
 ------------------------------------------------------------------------------
 -- Ex 8: when is a useful function, but its first argument has type
@@ -129,7 +129,9 @@ isumHelper n sum counter = do
 -- argument has type IO Bool.
 
 whenM :: IO Bool -> IO () -> IO ()
-whenM cond op = todo
+whenM cond op = do
+   val <- cond 
+   when val $ op 
 
 ------------------------------------------------------------------------------
 -- Ex 9: implement the while loop. while condition operation should

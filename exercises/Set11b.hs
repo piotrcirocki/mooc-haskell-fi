@@ -36,8 +36,11 @@ appendAll r xs = do
 --   "x"
 
 swapIORefs :: IORef a -> IORef a -> IO ()
-swapIORefs = todo
-
+swapIORefs x y = do
+  a <- readIORef x 
+  b <- readIORef y
+  writeIORef x b
+  writeIORef y a
 ------------------------------------------------------------------------------
 -- Ex 3: sometimes one bumps into IO operations that return IO
 -- operations. For instance the type IO (IO Int) means an IO operation
@@ -62,7 +65,9 @@ swapIORefs = todo
 --        replicateM l getLine
 
 doubleCall :: IO (IO a) -> IO a
-doubleCall op = todo
+doubleCall op = do
+  ioOp <- op
+  ioOp
 
 ------------------------------------------------------------------------------
 -- Ex 4: implement the analogue of function composition (the (.)

@@ -66,7 +66,7 @@ swapIORefs x y = do
 
 doubleCall :: IO (IO a) -> IO a
 doubleCall op = do
-  ioOp <- op
+  ioOp <- op -- join op 
   ioOp
 
 ------------------------------------------------------------------------------
@@ -86,7 +86,11 @@ doubleCall op = do
 --   3. return the result (of type b)
 
 compose :: (a -> IO b) -> (c -> IO a) -> c -> IO b
-compose op1 op2 c = todo
+compose op1 op2 c = do
+  let fst = op2 c
+  a <- fst
+  let snd = op1 a
+  snd
 
 ------------------------------------------------------------------------------
 -- Ex 5: Reading lines from a file. The module System.IO defines
@@ -116,7 +120,10 @@ compose op1 op2 c = todo
 --   ["module Set11b where","","import Control.Monad"]
 
 hFetchLines :: Handle -> IO [String]
-hFetchLines = todo
+hFetchLines h = do y <- hGetContents h
+                   let x = words [if c == '\n' then ' ' else c | c <- y]
+                   return x
+                   
 
 ------------------------------------------------------------------------------
 -- Ex 6: Given a Handle and a list of line indexes, produce the lines

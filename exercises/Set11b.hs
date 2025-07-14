@@ -37,7 +37,7 @@ appendAll r xs = do
 
 swapIORefs :: IORef a -> IORef a -> IO ()
 swapIORefs x y = do
-  a <- readIORef x 
+  a <- readIORef x
   b <- readIORef y
   writeIORef x b
   writeIORef y a
@@ -123,7 +123,7 @@ hFetchLines :: Handle -> IO [String]
 hFetchLines h = do y <- hGetContents h
                    let x = words [if c == '\n' then ' ' else c | c <- y]
                    return x
-                   
+
 
 ------------------------------------------------------------------------------
 -- Ex 6: Given a Handle and a list of line indexes, produce the lines
@@ -136,7 +136,17 @@ hFetchLines h = do y <- hGetContents h
 -- handle.
 
 hSelectLines :: Handle -> [Int] -> IO [String]
-hSelectLines h nums = todo
+hSelectLines h nums = do allLines <- hFetchLines h
+                         let selectedLines = addLineHelper allLines (length allLines) nums []
+                         return selectedLines
+
+addLineHelper :: [String] -> Int -> [Int] -> [String] -> [String]
+addLineHelper allLines (-1) idxList xs = xs
+addLineHelper allLines idx idxList xs =
+  if (idx + 1) `elem` idxList then
+     addLineHelper allLines (idx - 1) idxList ((allLines !! (idx) ):xs)
+  else
+     addLineHelper allLines (idx - 1) idxList xs
 
 ------------------------------------------------------------------------------
 -- Ex 7: In this exercise we see how a program can be split into a

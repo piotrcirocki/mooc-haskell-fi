@@ -144,7 +144,7 @@ addLineHelper :: [String] -> Int -> [Int] -> [String] -> [String]
 addLineHelper allLines (-1) idxList xs = xs
 addLineHelper allLines idx idxList xs =
   if (idx + 1) `elem` idxList then
-     addLineHelper allLines (idx - 1) idxList ((allLines !! (idx) ):xs)
+     addLineHelper allLines (idx - 1) idxList ((allLines !! (idx)):xs)
   else
      addLineHelper allLines (idx - 1) idxList xs
 
@@ -187,4 +187,10 @@ counter ("print",n) = (True,show n,n)
 counter ("quit",n)  = (False,"bye bye",n)
 
 interact' :: ((String,st) -> (Bool,String,st)) -> st -> IO st
-interact' f state = todo
+interact' f state = do
+  lineFromUser <- getLine
+  let (boolVal, strToPrint, newState) = f (lineFromUser, state)
+  putStrLn strToPrint 
+  case boolVal of
+    True -> interact' f newState
+    False -> return newState

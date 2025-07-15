@@ -190,7 +190,5 @@ interact' :: ((String,st) -> (Bool,String,st)) -> st -> IO st
 interact' f state = do
   lineFromUser <- getLine
   let (boolVal, strToPrint, newState) = f (lineFromUser, state)
-  putStrLn strToPrint 
-  case boolVal of
-    True -> interact' f newState
-    False -> return newState
+  putStrLn strToPrint
+  (if boolVal then interact' f newState else return newState)

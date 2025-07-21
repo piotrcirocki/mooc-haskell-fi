@@ -81,7 +81,7 @@ instance Functor Result where
   -- instance Functor Logger where
   -- fmap f (Logger log x) = Logger log (f x)
 
-  
+
 ------------------------------------------------------------------------------
 -- Ex 4: Here's a reimplementation of the Haskell list type. You might
 -- remember it from Set6. Implement the instance Functor List.
@@ -110,7 +110,7 @@ data TwoList a = TwoEmpty | TwoNode a a (TwoList a)
 
 instance Functor TwoList where
   fmap f TwoEmpty = TwoEmpty
-  fmap f (TwoNode a b c) = TwoNode (f a) (f b) (fmap f c) 
+  fmap f (TwoNode a b c) = TwoNode (f a) (f b) (fmap f c)
 
 ------------------------------------------------------------------------------
 -- Ex 6: Count all occurrences of a given element inside a Foldable.
@@ -123,7 +123,7 @@ instance Functor TwoList where
 --   count 'c' (Just 'c') ==> 1
 
 count :: (Eq a, Foldable f) => a -> f a -> Int
-count = todo
+count a = foldr (\x acc -> if x==a then acc + 1 else acc ) 0
 
 ------------------------------------------------------------------------------
 -- Ex 7: Return all elements that are in two Foldables, as a list.

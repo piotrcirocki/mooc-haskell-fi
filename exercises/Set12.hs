@@ -94,7 +94,8 @@ data List a = Empty | LNode a (List a)
   deriving Show
 
 instance Functor List where
-
+  fmap f Empty = Empty
+  fmap f (LNode a c) = LNode (f a) (fmap f c)
 ------------------------------------------------------------------------------
 -- Ex 5: Here's another list type. This time every node contains two
 -- values, so it's a type for a list of pairs. Implement the instance
@@ -108,6 +109,8 @@ data TwoList a = TwoEmpty | TwoNode a a (TwoList a)
   deriving Show
 
 instance Functor TwoList where
+  fmap f TwoEmpty = TwoEmpty
+  fmap f (TwoNode a b c) = TwoNode (f a) (f b) (fmap f c) 
 
 ------------------------------------------------------------------------------
 -- Ex 6: Count all occurrences of a given element inside a Foldable.

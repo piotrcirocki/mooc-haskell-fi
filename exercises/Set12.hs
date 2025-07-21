@@ -54,8 +54,34 @@ data Result a = MkResult a | NoResult | Failure String
   deriving Show
 
 instance Functor Result where
-  fmap f result = todo
+  fmap :: (a -> b) -> Result a -> Result b
+  fmap f NoResult = NoResult
+  fmap f (Failure a) = Failure a
+  fmap f (MkResult a) = MkResult (f a)
 
+
+-- instance Functor Maybe where
+--   -- In this instance, the type of fmap is:
+--   -- fmap :: (a -> b) -> Maybe a -> Maybe b
+--   fmap f Nothing = Nothing
+--   fmap f (Just x) = Just (f x)
+
+-- instance Functor [] where
+--   fmap = map
+
+-- data Tree a = Leaf | Node a (Tree a) (Tree a)
+-- instance Functor Tree where
+--   fmap _ Leaf = Leaf
+--   fmap f (Node val left right) = Node (f val) (fmap f left) (fmap f right)
+
+-- instance Functor Pair where
+--   -- fmap f applies f to all values
+--   fmap f (Pair x y) = Pair (f x) (f y)
+
+  -- instance Functor Logger where
+  -- fmap f (Logger log x) = Logger log (f x)
+
+  
 ------------------------------------------------------------------------------
 -- Ex 4: Here's a reimplementation of the Haskell list type. You might
 -- remember it from Set6. Implement the instance Functor List.

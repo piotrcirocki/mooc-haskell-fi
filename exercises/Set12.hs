@@ -134,7 +134,8 @@ count a = foldr (\x acc -> if x==a then acc + 1 else acc ) 0
 --   inBoth Nothing [3]    ==> []
 
 inBoth :: (Foldable f, Foldable g, Eq a) => f a -> g a -> [a]
-inBoth = todo
+inBoth xx = foldr (\x acc -> if x `elem` xx then acc ++ [x] else acc ) []
+
 
 ------------------------------------------------------------------------------
 -- Ex 8: Implement the instance Foldable List.

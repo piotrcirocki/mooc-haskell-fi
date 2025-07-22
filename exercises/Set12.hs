@@ -148,7 +148,18 @@ inBoth xx = foldr (\x acc -> if x `elem` xx then acc ++ [x] else acc ) []
 --   length (LNode 1 (LNode 2 (LNode 3 Empty))) ==> 3
 
 instance Foldable List where
-  foldr = todo
+  foldr :: (a -> b -> b) -> b -> List a -> b
+  foldr f b Empty =  b  
+  foldr f b (LNode a Empty) = f a b  
+  foldr f b (LNode a c) = f a (foldr f b c)
+
+--   {-# LANGUAGE DeriveFoldable #-}
+-- data Tree a = Empty | Leaf a | Node (Tree a) a (Tree a) deriving (Show, Foldable)
+
+-- instance Foldable Tree where
+--   foldMap f Empty = mempty
+--   foldMap f (Leaf x) = f x
+--   foldMap f (Node left x right) = foldMap f left <> f x <> foldMap f right
 
 ------------------------------------------------------------------------------
 -- Ex 9: Implement the instance Foldable TwoList.

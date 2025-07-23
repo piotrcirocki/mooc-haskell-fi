@@ -6,6 +6,7 @@ import Data.List
 import Data.Monoid
 
 import Mooc.Todo
+import Control.Arrow (ArrowChoice(right))
 
 
 ------------------------------------------------------------------------------
@@ -149,8 +150,8 @@ inBoth xx = foldr (\x acc -> if x `elem` xx then acc ++ [x] else acc ) []
 
 instance Foldable List where
   foldr :: (a -> b -> b) -> b -> List a -> b
-  foldr f b Empty =  b  
-  foldr f b (LNode a Empty) = f a b  
+  foldr f b Empty =  b
+  foldr f b (LNode a Empty) = f a b
   foldr f b (LNode a c) = f a (foldr f b c)
 
 --   {-# LANGUAGE DeriveFoldable #-}
@@ -168,8 +169,22 @@ instance Foldable List where
 --   sum (TwoNode 0 1 (TwoNode 2 3 TwoEmpty))    ==> 6
 --   length (TwoNode 0 1 (TwoNode 2 3 TwoEmpty)) ==> 4
 
+-- foldr :: (a -> b -> b) -> b -> t a -> b
+-- instance Foldable Pair where
+--   -- just like applying foldr over a list of length 2
+--   foldr f initialValue (Pair x y) = f x (f y initialValue)
+
+-- data TwoList a = TwoEmpty | TwoNode a a (TwoList a)
+--   deriving Show
+
+-- instance Functor TwoList where
+--   fmap f TwoEmpty = TwoEmpty
+--   fmap f (TwoNode a b c) = TwoNode (f a) (f b) (fmap f c)
+
 instance Foldable TwoList where
-  foldr = todo
+  foldr :: (a -> b -> b) -> b -> TwoList a -> b
+  foldr f init TwoEmpty = init
+  foldr f init (TwoNode a b c) = (f a . f b) (foldr f init c)
 
 ------------------------------------------------------------------------------
 -- Ex 10: (Tricky!) Fun a is a type that wraps a function Int -> a.
@@ -181,9 +196,18 @@ instance Foldable TwoList where
 data Fun a = Fun (Int -> a)
 
 runFun :: Fun a -> Int -> a
-runFun (Fun f) x = f x
+runFun (Fun f) x = f x -- in f we have here f: (Int -> a) in x: Int 
 
 instance Functor Fun where
+  --fmap :: (a -> b) -> Fun a -> Fun b
+  --fmap :: (Int -> b) -> Fun a -> Fun b
+  fmap :: (a -> b) -> Fun a -> Fun b
+  fmap f (Fun x) =  Fun (f . x) -- x: (Int -> a)  f:(a->b)
+  -- fmap c x
+
+-- using fun c, change incoming a to b
+-- fmap :: Functor f => (a -> b) -> f a -> f b
+-- fmap (*2) [1,2,3]
 
 ------------------------------------------------------------------------------
 -- Ex 11: (Tricky!) You'll find the binary tree type from Set 5b
@@ -240,12 +264,16 @@ data Tree a = Leaf | Node a (Tree a) (Tree a)
   deriving Show
 
 instance Functor Tree where
-  fmap = todo
+  fmap :: (a -> b) -> Tree a -> Tree b
+  fmap f (Node x left right) =  Node (f x ) (fmap f left) (fmap f right)
+  fmap f Leaf = Leaf
 
 sumTree :: Monoid m => Tree m -> m
-sumTree = todo
+sumTree Leaf = mempty
+sumTree (Node x left right) = sumTree left <> x <> sumTree  right
 
 instance Foldable Tree where
+  foldMap :: Monoid m => (a -> m) -> Tree a -> m
   foldMap f t = sumTree (fmap f t)
 
 ------------------------------------------------------------------------------

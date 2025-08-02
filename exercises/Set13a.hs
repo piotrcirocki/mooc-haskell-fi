@@ -11,6 +11,7 @@ import Data.List
 import qualified Data.Map as Map
 
 import Examples.Bank
+import GHC.Generics (K1(K1))
 
 
 ------------------------------------------------------------------------------
@@ -47,19 +48,23 @@ readNames s =
 -- (NB! There are obviously other corner cases like the inputs " " and
 -- "a b c", but you don't need to worry about those here)
 split :: String -> Maybe (String,String)
-split = todo
+split s = do
+  let pair = words s
+  if length pair > 1 then Just (pair !! 0 , pair !! 1)
+    else Nothing
+
 
 -- checkNumber should take a pair of two strings and return them
 -- unchanged if they don't contain numbers. Otherwise Nothing is
 -- returned.
 checkNumber :: (String, String) -> Maybe (String, String)
-checkNumber = todo
+checkNumber (a, b) = if any isDigit a || any isDigit b then  Nothing else Just (a, b)
 
 -- checkCapitals should take a pair of two strings and return them
 -- unchanged if both start with a capital letter. Otherwise Nothing is
 -- returned.
 checkCapitals :: (String, String) -> Maybe (String, String)
-checkCapitals (for,sur) = todo
+checkCapitals (for,sur) = if isUpper (for !! 0) && isUpper (sur  !! 0) then Just (for, sur) else Nothing
 
 ------------------------------------------------------------------------------
 -- Ex 2: Given a list of players and their scores (as [(String,Int)]),

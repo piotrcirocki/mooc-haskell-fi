@@ -66,6 +66,7 @@ checkNumber (a, b) = if any isDigit a || any isDigit b then  Nothing else Just (
 checkCapitals :: (String, String) -> Maybe (String, String)
 checkCapitals (for,sur) = if isUpper (for !! 0) && isUpper (sur  !! 0) then Just (for, sur) else Nothing
 
+
 ------------------------------------------------------------------------------
 -- Ex 2: Given a list of players and their scores (as [(String,Int)]),
 -- and two player names, return the name of the player who has more
@@ -91,7 +92,10 @@ checkCapitals (for,sur) = if isUpper (for !! 0) && isUpper (sur  !! 0) then Just
 --     ==> Just "a"
 
 winner :: [(String,Int)] -> String -> String -> Maybe String
-winner scores player1 player2 = todo
+winner scores player1 player2 = do
+  p1 <- lookup player1 scores
+  p2 <- lookup player2 scores
+  if (p1 >= p2) then Just player1 else Just player2
 
 ------------------------------------------------------------------------------
 -- Ex 3: given a list of indices and a list of values, return the sum

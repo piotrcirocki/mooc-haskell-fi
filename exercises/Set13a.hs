@@ -95,7 +95,7 @@ winner :: [(String,Int)] -> String -> String -> Maybe String
 winner scores player1 player2 = do
   p1 <- lookup player1 scores
   p2 <- lookup player2 scores
-  if (p1 >= p2) then Just player1 else Just player2
+  if p1 >= p2 then Just player1 else Just player2
 
 ------------------------------------------------------------------------------
 -- Ex 3: given a list of indices and a list of values, return the sum
@@ -111,9 +111,15 @@ winner scores player1 player2 = do
 --    Just 19
 --  selectSum [0..10] [4,6,9,20]
 --    Nothing
+safeIndex :: [a] -> Int -> Maybe a
+safeIndex xs idx = if (idx >= 0) && (idx < length xs) then Just (xs !! idx) else Nothing
+
+-- sumOfNumbers :: Num a => Maybe [a] -> Maybe a
+-- sumOfNumbers x = fmap sum x 
 
 selectSum :: Num a => [a] -> [Int] -> Maybe a
-selectSum xs is = todo
+selectSum xs iss = sum <$> mapM (safeIndex xs) iss
+
 
 ------------------------------------------------------------------------------
 -- Ex 4: Here is the Logger monad from the course material. Implement

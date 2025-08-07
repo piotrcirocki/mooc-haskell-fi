@@ -12,6 +12,7 @@ import qualified Data.Map as Map
 
 import Examples.Bank
 import GHC.Generics (K1(K1))
+import qualified Data.Maybe
 
 
 ------------------------------------------------------------------------------
@@ -114,8 +115,7 @@ winner scores player1 player2 = do
 safeIndex :: [a] -> Int -> Maybe a
 safeIndex xs idx = if (idx >= 0) && (idx < length xs) then Just (xs !! idx) else Nothing
 
--- sumOfNumbers :: Num a => Maybe [a] -> Maybe a
--- sumOfNumbers x = fmap sum x 
+-- fmap sum x  = sum <$> x 
 
 selectSum :: Num a => [a] -> [Int] -> Maybe a
 selectSum xs iss = sum <$> mapM (safeIndex xs) iss
@@ -153,7 +153,13 @@ instance Applicative Logger where
   (<*>) = ap
 
 countAndLog :: Show a => (a -> Bool) -> [a] -> Logger Int
-countAndLog = todo
+countAndLog f [] = return 0
+countAndLog f (x:xs)
+  | f x = do
+      msg (show x)
+      xs' <- countAndLog f xs
+      return (1 + xs')
+  | otherwise = countAndLog f xs
 
 ------------------------------------------------------------------------------
 -- Ex 5: You can find the Bank and BankOp code from the course
@@ -169,8 +175,14 @@ countAndLog = todo
 exampleBank :: Bank
 exampleBank = (Bank (Map.fromList [("harry",10),("cedric",7),("ginny",1)]))
 
+getAccountValue :: String -> Map.Map String Int  -> Int
+getAccountValue accountName  b = Data.Maybe.fromMaybe 0 (Map.lookup accountName b)
+
+getBankOpList :: String -> Bank -> (Int, Bank)
+getBankOpList accountName (Bank b) = (getAccountValue accountName b, Bank b)
+
 balance :: String -> BankOp Int
-balance accountName = todo
+balance accountName = BankOp (getBankOpList accountName)
 
 ------------------------------------------------------------------------------
 -- Ex 6: Using the operations balance, withdrawOp and depositOp, and

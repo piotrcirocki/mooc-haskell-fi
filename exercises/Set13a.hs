@@ -13,6 +13,7 @@ import qualified Data.Map as Map
 import Examples.Bank
 import GHC.Generics (K1(K1))
 import qualified Data.Maybe
+import Set7 (operation)
 
 
 ------------------------------------------------------------------------------
@@ -279,9 +280,14 @@ parensMatch s = count == 0
 --
 -- PS. The order of the list of pairs doesn't matter
 
-count :: Eq a => a -> State [(a,Int)] ()
-count x = todo
-
+count :: (Eq a, Ord a) => a -> State [(a,Int)] ()
+count x = do operations <- get
+             let xBased = lookup x operations
+             go x xBased operations 
+             where go :: (Eq a, Ord a) => a -> Maybe Int -> [(a,Int)] -> State [(a,Int)] ()
+                   go x (Just g) operations = put $ Map.toList $ Map.adjust (+1) x (Map.fromList operations)
+                   go x Nothing operations = put $ Map.toList $ Map.insert x 1 (Map.fromList operations)
+                   
 ------------------------------------------------------------------------------
 -- Ex 10: Implement the operation occurrences, which
 --   1. runs the count operation on each element in the input list

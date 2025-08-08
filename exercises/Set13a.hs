@@ -210,9 +210,15 @@ rob from to = balance from +> withdrawOp from +> depositOp to
 -- Example:
 --  runState update 3
 --    ==> ((),7)
-
+add :: Int -> State Int ()
+add i = do old <- get
+           put (old+i)
+multiply :: Int -> State Int ()
+multiply i = do old <- get
+                put (old*i)
+           
 update :: State Int ()
-update = todo
+update = multiply 2 >> add 1
 
 ------------------------------------------------------------------------------
 -- Ex 8: Checking that parentheses are balanced with the State monad.

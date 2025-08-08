@@ -246,7 +246,10 @@ update = multiply 2 >> add 1
 --   parensMatch "(()))("      ==> False
 
 paren :: Char -> State Int ()
-paren = todo
+paren ch = do old <- get
+              let oldValue | old == -1 = put old
+                           | otherwise = if ch == '(' then put (old + 1) else put (old - 1)
+              oldValue
 
 parensMatch :: String -> Bool
 parensMatch s = count == 0

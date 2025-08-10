@@ -307,5 +307,22 @@ count x = do operations <- get
 --  runState (occurrences [4,7]) [(2,1),(3,1)]
 --    ==> (4,[(2,1),(3,1),(4,1),(7,1)])
 
-occurrences :: (Eq a) => [a] -> State [(a,Int)] Int
-occurrences xs = todo
+occurrences :: (Eq a, Ord a) => [a] -> State [(a,Int)] Int
+occurrences xs = go xs 0
+  where go :: (Eq a, Ord a) => [a] -> Int -> State [(a, Int)] Int
+        go (x:xs) num = do occurrences <- get
+                           changeState x occurrences num
+                           go xs num
+        go [] num = do occurrences <- get
+                       let numOfElems = length occurrences
+                       return numOfElems
+
+changeState :: (Eq a, Ord a) => a -> [(a,Int)] -> Int -> State [(a, Int)] Int
+changeState x occurences num = do let isOpAvailable = lookup x occurences
+                                  go x occurences isOpAvailable
+                                  where go :: (Eq a, Ord a) =>  a -> [(a,Int)] -> Maybe Int -> State [(a, Int)] Int
+                                        go x operations (Just g) = do put $ Map.toList $ Map.adjust (+1) x (Map.fromList operations)
+                                                                      return num
+                                        go x operations  Nothing = do put $ Map.toList $ Map.insert x 1 (Map.fromList operations)
+                                                                      return num
+

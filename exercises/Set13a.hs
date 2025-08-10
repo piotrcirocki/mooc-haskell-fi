@@ -13,7 +13,7 @@ import qualified Data.Map as Map
 import Examples.Bank
 import GHC.Generics (K1(K1))
 import qualified Data.Maybe
-import Set7 (operation)
+
 
 
 ------------------------------------------------------------------------------

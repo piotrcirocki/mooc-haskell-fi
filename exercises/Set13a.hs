@@ -326,3 +326,9 @@ changeState x occurences num = do let isOpAvailable = lookup x occurences
                                         go x operations  Nothing = do put $ Map.toList $ Map.insert x 1 (Map.fromList operations)
                                                                       return num
 
+--Model solution:
+-- occurrences1 :: (Eq a, Ord a) => [a] -> State [(a,Int)] Int
+-- occurrences1 xs = do
+--   mapM_ count xs
+--   counts <- get
+--   return (length counts)

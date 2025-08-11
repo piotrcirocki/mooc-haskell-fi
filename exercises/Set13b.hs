@@ -42,7 +42,12 @@ test = do
   return (x<10)
 
 ifM :: Monad m => m Bool -> m a -> m a -> m a
-ifM opBool opThen opElse = todo
+ifM opBool opThen opElse = do
+  givenBool <- opBool
+  if givenBool then opThen else opElse
+
+-- when :: Monad m => Bool -> m () -> m ()        -- conditional operation
+-- unless :: Monad m => Bool -> m () -> m ()      -- same, but condition is flipped
 
 ------------------------------------------------------------------------------
 -- Ex 2: the standard library function Control.Monad.mapM defines a

@@ -145,6 +145,12 @@ maze1 = [("Entry",["Pit","Corridor 1"])
 --   runState (visit maze1 "Entry") ["Corridor 1"]
 --     ==> ((),["Pit","Entry","Corridor 1"])
 
+-- def dfs (v, visited)
+--   visited,append(v)
+--   for u in graph[v]:
+--       if u not in visited:
+--         visited = dfs(u, visited)
+--   return visited
 
 visit :: [(String,[String])] -> String -> State [String] ()
 visit maze place = todo

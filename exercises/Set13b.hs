@@ -9,7 +9,7 @@ import Control.Monad.Trans.State
 import Data.Char
 import Data.IORef
 import Data.List
-
+import Data.Maybe       (fromMaybe)
 
 ------------------------------------------------------------------------------
 -- Ex 1: implement the function ifM, that takes three monadic
@@ -145,17 +145,28 @@ maze1 = [("Entry",["Pit","Corridor 1"])
 --   runState (visit maze1 "Entry") ["Corridor 1"]
 --     ==> ((),["Pit","Entry","Corridor 1"])
 
-
 visit :: [(String,[String])] -> String -> State [String] ()
-visit maze place = todo
+visit maze place = do
+  visited <- get
+  unless (place `elem` visited) $ do
+    modify (place :)
+    let neighbours = lookup place maze
+    go maze neighbours
+    where
+      go :: [(String,[String])] -> Maybe [String] -> State [String] ()
+      go maze (Just neighbours) = do
+        mapM_ (visit maze) neighbours
+      go maze Nothing = return ()
 
 -- Now you should be able to implement path using visit. If you run
 -- visit on a place using an empty state, you'll get a state that
 -- lists all the places that are reachable from the starting place.
 
 path :: [(String,[String])] -> String -> String -> Bool
-path maze place1 place2 = todo
-
+path maze place1 place2 = do
+  let places = execState (visit maze place1) []
+  let isElem = place2 `elem` places
+  isElem
 ------------------------------------------------------------------------------
 -- Ex 4: Given two lists, ks and ns, find numbers i and j from ks,
 -- such that their sum i+j=n is in ns. Return all such triples

@@ -180,8 +180,11 @@ path maze place1 place2 = do
 --
 -- PS. The tests don't care about the order of results.
 
+findSum :: [Int] -> Int -> [(Int,Int, Int)]
+findSum xs k = [(a,b, k) | a <- xs, b <- xs, a+b==k ]
+
 findSum2 :: [Int] -> [Int] -> [(Int,Int,Int)]
-findSum2 ks ns = todo
+findSum2 ks = concatMap (findSum ks)
 
 ------------------------------------------------------------------------------
 -- Ex 5: compute all possible sums of elements from the given

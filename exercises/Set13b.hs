@@ -205,7 +205,7 @@ findSum2 ks = concatMap (findSum ks)
 --     ==> [7,3,5,1,6,2,4,0]
 
 allSums :: [Int] -> [Int]
-allSums xs = todo
+allSums xs = fmap sum $ subsequences xs
 
 ------------------------------------------------------------------------------
 -- Ex 6: the standard library defines the function

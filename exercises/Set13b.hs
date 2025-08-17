@@ -205,7 +205,7 @@ findSum2 ks = concatMap (findSum ks)
 --     ==> [7,3,5,1,6,2,4,0]
 
 allSums :: [Int] -> [Int]
-allSums xs = fmap sum $ subsequences xs
+allSums xs = sum <$> subsequences xs
 
 ------------------------------------------------------------------------------
 -- Ex 6: the standard library defines the function
@@ -235,7 +235,11 @@ sumBounded :: Int -> [Int] -> Maybe Int
 sumBounded k xs = foldM (f1 k) 0 xs
 
 f1 :: Int -> Int -> Int -> Maybe Int
-f1 k acc x = todo
+--f1 k acc x = todo
+f1 limit acc currElem  = do
+   if (currElem + acc) <= limit then
+     Just (acc + currElem)
+   else Nothing
 
 -- sumNotTwice computes the sum of a list, but counts only the first
 -- occurrence of each value.
@@ -249,7 +253,13 @@ sumNotTwice :: [Int] -> Int
 sumNotTwice xs = fst $ runState (foldM f2 0 xs) []
 
 f2 :: Int -> Int -> State [Int] Int
-f2 acc x = todo
+f2 acc x = do
+  visited <- get
+  let notElem = x `elem` visited
+  if not notElem then do 
+    modify(x :)
+    return (acc + x)
+  else return acc 
 
 ------------------------------------------------------------------------------
 -- Ex 7: here is the Result type from Set12. Implement a Monad Result

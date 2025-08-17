@@ -297,7 +297,7 @@ instance Monad Result where
   -- implement return and >>=
   return = MkResult 
   (>>=) (MkResult x) f = f x
-  (>>=) NoResult f = NoResult
+  NoResult >>=  f = NoResult
   (>>=) (Failure x) f = Failure x
   -- -- lift a normal value into the monad
   -- return :: a -> m a
@@ -357,8 +357,12 @@ modifySL f = SL (\s -> ((),f s,[]))
 
 instance Functor SL where
   -- implement fmap
-  fmap = todo
-
+  fmap :: (a -> b) -> SL a -> SL b
+  fmap f x = do 
+    intA <- getSL
+    let state = runSL x intA
+    let (fst, snd, thrd) = state
+    return $ f fst
 -- This is an Applicative instance that works for any monad, you
 -- can just ignore it for now. We'll get back to Applicative later.
 instance Applicative SL where

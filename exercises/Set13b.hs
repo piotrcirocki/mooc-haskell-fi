@@ -1,4 +1,6 @@
 {-# OPTIONS_GHC -Wno-noncanonical-monad-instances #-} -- this silences an uninteresting warning
+{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+{-# HLINT ignore "Use tuple-section" #-}
 
 module Set13b where
 
@@ -355,14 +357,24 @@ putSL s' = SL (\s -> ((),s',[]))
 modifySL :: (Int->Int) -> SL ()
 modifySL f = SL (\s -> ((),f s,[]))
 
+-- instance Functor SL where
+--   -- implement fmap
+--   fmap :: (a -> b) -> SL a -> SL b
+--   fmap f x = do 
+--     intA <- getSL
+--     let state = runSL x intA
+--     let (fst, snd, thrd) = state
+--     return $ f fst
+
 instance Functor SL where
   -- implement fmap
   fmap :: (a -> b) -> SL a -> SL b
-  fmap f x = do 
-    intA <- getSL
-    let state = runSL x intA
-    let (fst, snd, thrd) = state
-    return $ f fst
+  fmap f (SL x) = do 
+    currentInt <- getSL
+    let currentTriple = x currentInt
+    let (currentA, integerVal, log) = currentTriple 
+    return $ f currentA
+    
 -- This is an Applicative instance that works for any monad, you
 -- can just ignore it for now. We'll get back to Applicative later.
 instance Applicative SL where
@@ -371,8 +383,28 @@ instance Applicative SL where
 
 instance Monad SL where
   -- implement return and >>=
-  return = todo
-  (>>=) = todo
+  return :: a -> SL a
+  return a = SL (\s -> (a , s, []))
+  (>>=) :: SL a -> (a -> SL b) -> SL b
+  (>>=) (SL x) f = do
+    currentInt <- getSL 
+    let currentTriple = x currentInt
+    let (currentA, integerVal, log) = currentTriple 
+    f currentA
+
+mkCounter :: IO (IO (), IO Int)
+mkCounter = todo
+
+-- instance Monad SL where
+--   -- implement return and >>=
+--   return :: a -> SL a
+--   return a = SL (\s -> (a , s, []))
+--   (>>=) :: SL a -> (a -> SL b) -> SL b
+--   (>>=) a f = do
+--     intA <- getSL
+--     let state = runSL a intA
+--     let (fst, snd, thrd) = state
+--     f fst
 
 ------------------------------------------------------------------------------
 -- Ex 9: Implement the operation mkCounter that produces the IO operations
@@ -399,5 +431,5 @@ instance Monad SL where
 --  *Set11b> get
 --  4
 
-mkCounter :: IO (IO (), IO Int)
-mkCounter = todo
+-- mkCounter :: IO (IO (), IO Int)
+-- mkCounter = todo

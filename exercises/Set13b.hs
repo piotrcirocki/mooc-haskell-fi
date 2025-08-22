@@ -410,5 +410,13 @@ instance Monad SL where
 --  *Set11b> get
 --  4
 
+whileLoop :: IORef Int -> IO (IO (), IO Int)
+whileLoop r = do
+    let num = readIORef r
+    let i = modifyIORef r (+1) 
+    return (i, num)
+
 mkCounter :: IO (IO (), IO Int)
-mkCounter = todo
+mkCounter = do
+    r <- newIORef 0
+    whileLoop r

@@ -357,23 +357,13 @@ putSL s' = SL (\s -> ((),s',[]))
 modifySL :: (Int->Int) -> SL ()
 modifySL f = SL (\s -> ((),f s,[]))
 
--- instance Functor SL where
---   -- implement fmap
---   fmap :: (a -> b) -> SL a -> SL b
---   fmap f x = do 
---     intA <- getSL
---     let state = runSL x intA
---     let (fst, snd, thrd) = state
---     return $ f fst
-
 instance Functor SL where
   -- implement fmap
   fmap :: (a -> b) -> SL a -> SL b
-  fmap f (SL x) = do 
-    currentInt <- getSL
-    let currentTriple = x currentInt
-    let (currentA, integerVal, log) = currentTriple 
-    return $ f currentA
+  fmap f x = do
+    SL $ \s ->
+      let (a, b , s') = runSL x s
+      in (f a, b, s') 
     
 -- This is an Applicative instance that works for any monad, you
 -- can just ignore it for now. We'll get back to Applicative later.
@@ -381,46 +371,6 @@ instance Applicative SL where
   pure = return
   (<*>) = ap
 
--- instance Monad (State s) where
---     return a = State $ \s -> (a, s)
---     m >>= k  = State $ \s -> 
---                  let (a, s') = runState m s
---                   in runState (k a) s'
-
-
--- `BankOp a` is an operation that transforms a Bank value,
--- while returning a value of type `a`
--- data BankOp a = BankOp (Bank -> (a,Bank))
-
--- running a BankOp on a Bank
--- runBankOp :: BankOp a -> Bank -> (a,Bank)
--- runBankOp (BankOp f) bank = f bank
-
--- -- Running one BankOp after another
--- (+>>) :: BankOp a -> BankOp b -> BankOp b
--- op1 +>> op2 = BankOp combined
---   where combined bank = let (_,bank1) = runBankOp op1 bank
---                         in runBankOp op2 bank1
-
--- -- Running a parameterized BankOp, using the value returned
--- -- by a previous BankOp.  The implementation is a bit tricky
--- -- but it's enough to understand how +> is used for now.
--- (+>) :: BankOp a -> (a -> BankOp b) -> BankOp b
--- op +> parameterized = BankOp combined
---   where combined bank = let (a,bank1) = runBankOp op bank
---                         in runBankOp (parameterized a) bank1
-
--- -- Make a BankOp out of deposit.
--- -- There is no return value so we use ().
--- depositOp :: String -> Int -> BankOp ()
--- depositOp accountName amount = BankOp depositHelper
---   where depositHelper bank = ((), deposit accountName amount bank)
-
--- -- Make a BankOp out of withdraw. Note how
--- --   withdraw accountName amount :: Bank -> (Int,Bank)
--- -- is almost a BankOp already!
--- withdrawOp :: String -> Int -> BankOp Int
--- withdrawOp accountName amount = BankOp (withdraw accountName amount)
 
 instance Monad SL where
   -- implement return and >>=
@@ -429,55 +379,11 @@ instance Monad SL where
   (>>=) :: SL a -> (a -> SL b) -> SL b
   x >>= f = SL $ \s ->
    let (a, b , s') = runSL x s
-       
    in do
      let (c, d, g) = runSL (f a) b
      (c, d , s'++g)
 
--- instance Monad SL where
---   -- implement return and >>=
---   return :: a -> SL a
---   return a = SL (\s -> (a , s, []))
---   (>>=) :: SL a -> (a -> SL b) -> SL b    
---   x >>= f = SL $ \s  ->
---     let (a, b, s') = runSL x s
---     in runSL (f a) b
 
-
--- instance Monad SL where
---   -- implement return and >>=
---   return :: a -> SL a
---   return a = SL (\s -> (a , s, []))
---   (>>=) :: SL a -> (a -> SL b) -> SL b
---   x >>= f = SL $ \s ->
---     let (a, b, s') = runSL x s
---      in runSL (f a) b
-
-
--- instance Monad SL where
---   -- implement return and >>=
---   return :: a -> SL a
---   return a = SL (\s -> (a , s, []))
---   (>>=) :: SL a -> (a -> SL b) -> SL b
---   (>>=) (SL x) f = do
---     currentInt <- getSL 
---     let currentTriple = x currentInt
---     let (currentA, integerVal, log) = currentTriple 
---     f currentA
-
-mkCounter :: IO (IO (), IO Int)
-mkCounter = todo
-
--- instance Monad SL where
---   -- implement return and >>=
---   return :: a -> SL a
---   return a = SL (\s -> (a , s, []))
---   (>>=) :: SL a -> (a -> SL b) -> SL b
---   (>>=) a f = do
---     intA <- getSL
---     let state = runSL a intA
---     let (fst, snd, thrd) = state
---     f fst
 
 ------------------------------------------------------------------------------
 -- Ex 9: Implement the operation mkCounter that produces the IO operations
@@ -504,5 +410,5 @@ mkCounter = todo
 --  *Set11b> get
 --  4
 
--- mkCounter :: IO (IO (), IO Int)
--- mkCounter = todo
+mkCounter :: IO (IO (), IO Int)
+mkCounter = todo

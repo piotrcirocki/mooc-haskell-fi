@@ -55,9 +55,30 @@ shout x = T.intercalate  (T.pack " ") $ mapToEverySecond T.toUpper $ T.words x
 --   longestRepeat (T.pack "") ==> 0
 --   longestRepeat (T.pack "aabbbbccc") ==> 4
 
-longestRepeat :: T.Text -> Int
-longestRepeat = todo
+longestHlpr :: T.Text -> Int ->  Int -> Char -> Int
+--lontestHlpr :: (Ord t, Num t) => T.Text -> Int -> Int -> Char -> Int 
+longestHlpr txt currCnt maxCont prevChar
+  | T.null txt = maxCont
+  | otherwise = do
+      let headChar = T.head txt
+      if prevChar == headChar then
+        if currCnt > maxCont then
+          longestHlpr (T.tail txt) (currCnt+1) (currCnt+1) headChar
+        else
+          longestHlpr (T.tail txt) (currCnt+1) maxCont headChar
+      else
+        longestHlpr (T.tail txt) 1 maxCont headChar
 
+
+-- longestRepeat :: T.Text -> Int
+-- longestRepeat t = longestHlpr t 0 0 ' '
+
+longestRepeat :: T.Text -> Int
+longestRepeat t = do
+  let xss = T.groupBy (==) $ t
+      l = T.length $ snd $ maximum $ [(T.length xs, xs) | xs <- xss]
+      in do
+         if T.length t == 0 then 0 else l
 ------------------------------------------------------------------------------
 -- Ex 4: Given a lazy (potentially infinite) Text, extract the first n
 -- characters from it and return them as a strict Text.

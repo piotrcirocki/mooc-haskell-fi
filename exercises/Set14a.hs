@@ -60,7 +60,7 @@ longestRepeat t = do
   let xss = T.groupBy (==) $ t
       l = T.length $ foldl1 (\acc x -> if T.length acc > T.length x then acc else x) xss
       in do
-         if T.length t == 0 then 0 else l 
+         if T.length t == 0 then 0 else l
 ------------------------------------------------------------------------------
 -- Ex 4: Given a lazy (potentially infinite) Text, extract the first n
 -- characters from it and return them as a strict Text.
@@ -72,7 +72,7 @@ longestRepeat t = do
 --   takeStrict 15 (TL.pack (cycle "asdf"))  ==>  "asdfasdfasdfasd"
 
 takeStrict :: Int64 -> TL.Text -> T.Text
-takeStrict = todo
+takeStrict n txt = TL.toStrict $ TL.take n txt 
 
 ------------------------------------------------------------------------------
 -- Ex 5: Find the difference between the largest and smallest byte

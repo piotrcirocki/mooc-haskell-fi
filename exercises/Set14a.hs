@@ -72,7 +72,7 @@ longestRepeat t = do
 --   takeStrict 15 (TL.pack (cycle "asdf"))  ==>  "asdfasdfasdfasd"
 
 takeStrict :: Int64 -> TL.Text -> T.Text
-takeStrict n txt = TL.toStrict $ TL.take n txt 
+takeStrict n txt = TL.toStrict $ TL.take n txt
 
 ------------------------------------------------------------------------------
 -- Ex 5: Find the difference between the largest and smallest byte
@@ -107,7 +107,9 @@ byteRange x
 --   xorChecksum (B.pack []) ==> 0
 
 xorChecksum :: B.ByteString -> Word8
-xorChecksum = todo
+xorChecksum p
+  | B.length p  == 0 = 0
+  | otherwise = B.foldl1 Data.Bits.xor p
 
 ------------------------------------------------------------------------------
 -- Ex 7: Given a ByteString, compute how many UTF-8 characters it

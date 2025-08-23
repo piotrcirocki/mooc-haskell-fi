@@ -41,8 +41,11 @@ greetText txt
 --   shout (T.pack "word")
 --     ==> "WORD"
 
+mapToEverySecond :: (c -> c) -> [c] -> [c]
+mapToEverySecond f = zipWith ($) (cycle [f, id])
+
 shout :: T.Text -> T.Text
-shout = todo
+shout x = T.intercalate  (T.pack " ") $ mapToEverySecond T.toUpper $ T.words x
 
 ------------------------------------------------------------------------------
 -- Ex 3: Find the longest sequence of a single character repeating in

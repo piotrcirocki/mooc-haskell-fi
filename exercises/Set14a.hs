@@ -84,7 +84,9 @@ takeStrict n txt = TL.toStrict $ TL.take n txt
 --   byteRange (B.pack [3]) ==> 0
 
 byteRange :: B.ByteString -> Word8
-byteRange = todo
+byteRange x
+  | B.length x == 0 = 0
+  | otherwise = B.maximum x - B.minimum x
 
 ------------------------------------------------------------------------------
 -- Ex 6: Compute the XOR checksum of a ByteString. The XOR checksum of

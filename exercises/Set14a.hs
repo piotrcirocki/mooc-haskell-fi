@@ -14,6 +14,7 @@ import qualified Data.Text as T
 import qualified Data.Text.Lazy as TL
 import qualified Data.ByteString as B
 import qualified Data.ByteString.Lazy as BL
+import qualified Data.Binary.Builder as B
 
 ------------------------------------------------------------------------------
 -- Ex 1: Greet a person. Given the name of a person as a Text, return
@@ -125,10 +126,6 @@ xorChecksum p
 --   countUtf8Chars (B.pack [195,184]) ==> Just 1
 --   countUtf8Chars (B.drop 1 (encodeUtf8 (T.pack "åäö"))) ==> Nothing
 
-
---let x = decodeUtf8Chunk $ encodeUtf8 (T.pack "åäö")
---let (a, b, c) = x
---validateUtf8Chunk $ encodeUtf8 (T.pack "åäö")
 countUtf8Chars :: B.ByteString -> Maybe Int
 countUtf8Chars x = do
   let s = Data.Text.Encoding.decodeUtf8' $ x
@@ -145,5 +142,4 @@ countUtf8Chars x = do
 --     ==> [0,1,2,2,1,0,0,1,2,2,1,0,0,1,2,2,1,0,0,1]
 
 pingpong :: B.ByteString -> BL.ByteString
-pingpong = todo
-
+pingpong b = BL.cycle $ B.fromStrict $  (b <> B.reverse b)

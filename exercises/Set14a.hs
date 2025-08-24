@@ -7,7 +7,7 @@ import Mooc.Todo
 
 import Data.Bits
 import Data.Char
-import Data.Text.Encoding
+import Data.Text.Encoding 
 import Data.Word
 import Data.Int
 import qualified Data.Text as T
@@ -125,9 +125,16 @@ xorChecksum p
 --   countUtf8Chars (B.pack [195,184]) ==> Just 1
 --   countUtf8Chars (B.drop 1 (encodeUtf8 (T.pack "åäö"))) ==> Nothing
 
-countUtf8Chars :: B.ByteString -> Maybe Int
-countUtf8Chars = todo
 
+--let x = decodeUtf8Chunk $ encodeUtf8 (T.pack "åäö")
+--let (a, b, c) = x
+--validateUtf8Chunk $ encodeUtf8 (T.pack "åäö")
+countUtf8Chars :: B.ByteString -> Maybe Int
+countUtf8Chars x = do
+  let s = Data.Text.Encoding.decodeUtf8' $ x
+  case s of
+    Left a   -> Nothing
+    Right x -> return $ T.length $ x  
 ------------------------------------------------------------------------------
 -- Ex 8: Given a (nonempty) strict ByteString b, generate an infinite
 -- lazy ByteString that consists of b, reversed b, b, reversed b, and

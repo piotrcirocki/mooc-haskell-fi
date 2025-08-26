@@ -114,9 +114,12 @@ deposit db account amount = execute db depositQuery (account, amount)
 balanceQuery :: Query
 balanceQuery = Query (T.pack "SELECT amount FROM events WHERE account = ?;")
 
-balance :: Connection -> T.Text -> IO Int
-balance = todo
 
+balance :: Connection -> T.Text -> IO Int
+balance db1 account = do
+  val <- query db1 balanceQuery [account] :: IO [[Int]]
+  let sum1 = map sum val 
+  return $ sum sum1
 ------------------------------------------------------------------------------
 -- Ex 3: Now that we have the database part covered, let's think about
 -- our API next. The datatype Command represents the various commands

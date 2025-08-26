@@ -76,12 +76,15 @@ getAllQuery = Query (T.pack "SELECT account, amount FROM events;")
 -- NOTE! Do not add anything to the name, otherwise you'll get weird
 -- test failures later.
 openDatabase :: String -> IO Connection
-openDatabase = todo
+openDatabase s = do
+ db <- open s
+ execute_ db initQuery
+ return db
 
 -- given a db connection, an account name, and an amount, deposit
 -- should add an (account, amount) row into the database
 deposit :: Connection -> T.Text -> Int -> IO ()
-deposit = todo
+deposit db account amount = execute db depositQuery (account, amount)
 
 ------------------------------------------------------------------------------
 -- Ex 2: Fetching an account's balance. Below you'll find

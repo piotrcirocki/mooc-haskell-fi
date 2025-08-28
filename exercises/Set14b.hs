@@ -136,7 +136,7 @@ balance db1 account = do
 -- The return type of this function is Maybe Command instead of
 -- Command so that we can add error handling later. For now, you can
 -- assume the input to parseCommand is always valid, and the return
--- value is always Just someCommand.
+-- value is always Just someComman  d.
 --
 -- The function parseInt that reads an Int from a Text is provided for
 -- you.
@@ -157,8 +157,11 @@ parseInt :: T.Text -> Maybe Int
 parseInt = readMaybe . T.unpack
 
 parseCommand :: [T.Text] -> Maybe Command
-parseCommand = todo
-
+parseCommand [] = Nothing
+parseCommand txt
+  | (txt !! 0) == T.pack "deposit" = Just (Deposit (txt !! 1) ( fromJust $ parseInt $ txt !! 2) )
+  | (txt !! 0) == T.pack "balance" = Just (Balance (txt !! 1) )
+  | otherwise = Nothing 
 ------------------------------------------------------------------------------
 -- Ex 4: Running commands. Implement the IO operation perform that takes a
 -- database Connection, the result of parseCommand (a Maybe Command),

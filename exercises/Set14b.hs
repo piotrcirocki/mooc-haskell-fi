@@ -159,10 +159,38 @@ parseInt = readMaybe . T.unpack
 parseCommand :: [T.Text] -> Maybe Command
 parseCommand [] = Nothing
 parseCommand txt
-  | head txt == T.pack "deposit" = Just (Deposit (txt !! 1) ( fromJust $ parseInt $ txt !! 2) )
-  | head txt == T.pack "balance" = Just (Balance (txt !! 1) )
-  | head txt == T.pack "withdraw" = Just (Withdraw (txt !! 1) ( fromJust $ parseInt $ txt !! 2) )
-  | otherwise = Nothing 
+  | head txt == T.pack "deposit" = validateDeposit txt 
+  | head txt == T.pack "withdraw" = validateWithdraw txt 
+  | head txt == T.pack "balance" = validateBalance txt 
+  | otherwise = Nothing
+
+--    - http://localhost:3421/unknown/path
+--    - http://localhost:3421/deposit/pekka
+--    - http://localhost:3421/deposit/pekka/x
+--    - http://localhost:3421/deposit/pekka/1x
+--    - http://localhost:3421/deposit/pekka/1/3
+--    - http://localhost:3421/balance
+--    - http://localhost:3421/balance/matti/pekka
+
+
+validateDeposit :: [T.Text] -> Maybe Command
+validateDeposit txt 
+  | ((length txt) /= 3) = Nothing
+  | parseInt (txt !! 2) == Nothing = Nothing  
+  | otherwise = Just (Deposit (txt !! 1) (fromJust $ parseInt $ txt !! 2) )
+  
+validateWithdraw :: [T.Text] -> Maybe Command
+validateWithdraw txt 
+  | ((length txt) /= 3) = Nothing
+  | parseInt (txt !! 2) == Nothing = Nothing  
+  | otherwise = Just (Withdraw (txt !! 1) (fromJust $ parseInt $ txt !! 2) )
+
+validateBalance :: [T.Text] -> Maybe Command
+validateBalance txt  
+  | ((length txt) /= 2) = Nothing
+  | otherwise = Just (Balance (txt !! 1) )
+
+
 ------------------------------------------------------------------------------
 -- Ex 4: Running commands. Implement the IO operation perform that takes a
 -- database Connection, the result of parseCommand (a Maybe Command),
@@ -198,6 +226,10 @@ perform db (Just (Withdraw x y)) = do
 perform db (Just (Balance c)) = do
   val <-  balance db c
   return $ T.pack $ show $ val
+
+perform db Nothing = do
+  return $ T.pack "ERROR"
+  
 ------------------------------------------------------------------------------
 -- Ex 5: Next up, let's set up a simple HTTP server. Implement a WAI
 -- Application simpleServer that always responds with a HTTP status

@@ -150,7 +150,7 @@ balance db1 account = do
 --   parseCommand [T.pack "deposit", T.pack "madoff", T.pack "123456"]
 --     ==> Just (Deposit "madoff" 123456)
 
-data Command = Deposit T.Text Int | Balance T.Text
+data Command = Deposit T.Text Int | Balance T.Text | Withdraw T.Text Int
   deriving (Show, Eq)
 
 parseInt :: T.Text -> Maybe Int
@@ -161,6 +161,7 @@ parseCommand [] = Nothing
 parseCommand txt
   | head txt == T.pack "deposit" = Just (Deposit (txt !! 1) ( fromJust $ parseInt $ txt !! 2) )
   | head txt == T.pack "balance" = Just (Balance (txt !! 1) )
+  | head txt == T.pack "withdraw" = Just (Withdraw (txt !! 1) ( fromJust $ parseInt $ txt !! 2) )
   | otherwise = Nothing 
 ------------------------------------------------------------------------------
 -- Ex 4: Running commands. Implement the IO operation perform that takes a
@@ -188,6 +189,10 @@ parseCommand txt
 perform :: Connection -> Maybe Command -> IO T.Text
 perform db (Just (Deposit x y)) = do
   deposit db x y
+  return $ T.pack "OK"
+
+perform db (Just (Withdraw x y)) = do
+  deposit db x (negate y)
   return $ T.pack "OK"
 
 perform db (Just (Balance c)) = do
@@ -276,6 +281,8 @@ main = do
 --   - Open <http://localhost:3421/balance/simon> in your browser.
 --     You should see the text 11.
 
+withdraw :: Connection -> T.Text -> Int -> IO ()
+withdraw db account amount = execute db depositQuery (account, amount)
 
 ------------------------------------------------------------------------------
 -- Ex 8: Error handling. Modify the parseCommand function so that it

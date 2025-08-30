@@ -37,10 +37,11 @@ sumTwoMaybes = liftA2 (+)
 
 statements :: [String] -> [String] -> [String]
 statements x y = do
-                 liftA2 display x y ++ liftA2 displayNot x y 
+                 liftA2 display x y ++ liftA2 displayNot x y
                  where
-                   display x y = x ++ " is " ++ y 
+                   display x y = x ++ " is " ++ y
                    displayNot x y = x ++ " is not " ++ y
+
 ------------------------------------------------------------------------------
 -- Ex 3: A simple calculator with error handling. Given an operation
 -- (negate or double) and a number, as strings, compute the result.
@@ -56,8 +57,39 @@ statements x y = do
 --  calculator "doubl" "7"    ==> Nothing
 --  calculator "double" "7x"  ==> Nothing
 
+parseAmount :: String -> Maybe Int
+parseAmount = readMaybe
+
+parseStr :: String -> Maybe String
+parseStr "negate" = Just "negate"
+parseStr "double" = Just "double"
+parseStr _ = Nothing
+
+displayNum :: String -> Int -> Int
+displayNum "negate" val = negate val
+displayNum "double" val = val * 2
+
+
 calculator :: String -> String -> Maybe Int
-calculator = todo
+calculator str val = liftA2 displayNum (parseStr str) (parseAmount val) 
+
+-- data Answer = Yes | No
+--   deriving (Show, Eq)
+
+-- parseYes :: Alternative f => String -> f Answer
+-- parseYes "y" = pure Yes
+-- parseYes "yes" = pure Yes
+-- parseYes "maybe" = pure Yes
+-- parseYes _ = empty
+
+-- parseNo :: Alternative f => String -> f Answer
+-- parseNo "n" = pure No
+-- parseNo "no" = pure No
+-- parseNo "maybe" = pure No
+-- parseNo _ = empty
+
+-- parseAnswer :: Alternative f => String -> f Answer
+-- parseAnswer s = parseYes s <|> parseNo s
 
 ------------------------------------------------------------------------------
 -- Ex 4: Safe division. Implement the function validateDiv that

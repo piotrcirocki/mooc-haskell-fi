@@ -71,25 +71,7 @@ displayNum "double" val = val * 2
 
 
 calculator :: String -> String -> Maybe Int
-calculator str val = liftA2 displayNum (parseStr str) (parseAmount val) 
-
--- data Answer = Yes | No
---   deriving (Show, Eq)
-
--- parseYes :: Alternative f => String -> f Answer
--- parseYes "y" = pure Yes
--- parseYes "yes" = pure Yes
--- parseYes "maybe" = pure Yes
--- parseYes _ = empty
-
--- parseNo :: Alternative f => String -> f Answer
--- parseNo "n" = pure No
--- parseNo "no" = pure No
--- parseNo "maybe" = pure No
--- parseNo _ = empty
-
--- parseAnswer :: Alternative f => String -> f Answer
--- parseAnswer s = parseYes s <|> parseNo s
+calculator str val = liftA2 displayNum (parseStr str) (parseAmount val)
 
 ------------------------------------------------------------------------------
 -- Ex 4: Safe division. Implement the function validateDiv that
@@ -106,8 +88,11 @@ calculator str val = liftA2 displayNum (parseStr str) (parseAmount val)
 --  validateDiv 0 3 ==> Ok 0
 
 validateDiv :: Int -> Int -> Validation Int
-validateDiv = todo
-
+validateDiv a b = liftA2 compute checkFirst checkSecond
+  where checkFirst = pure a
+        checkSecond = check (b /= 0) "Division by zero!" b
+        compute x y = x `div` y
+        
 ------------------------------------------------------------------------------
 -- Ex 5: Validating street addresses. A street address consists of a
 -- street name, a street number, and a postcode.

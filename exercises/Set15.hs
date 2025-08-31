@@ -156,7 +156,23 @@ data Person = Person String Int Bool
 twoPersons :: Applicative f =>
   f String -> f Int -> f Bool -> f String -> f Int -> f Bool
   -> f [Person]
-twoPersons name1 age1 employed1 name2 age2 employed2 = todo
+twoPersons name1 age1 employed1 name2 age2 employed2 =
+  liftA2 (++)
+  (getPerson <$> name1 <*> age1  <*> employed1)
+  (getPerson <$> name2 <*> age2  <*> employed2)
+  
+getPerson :: String -> Int -> Bool -> [Person]
+getPerson name age employed = [Person name age employed]
+
+  
+  -- return $ [(Person name1 age1 employed1), Person n2 a2 e2]
+  -- let n1 =  name1
+  -- a1 <- age1
+  -- e1 <- employed1
+  -- n2 <- name2
+  -- a2 <- age2
+  -- e2 <- employed2
+  -- return $ [(Person n1 a1 e1), Person n2 a2 e2]
 
 ------------------------------------------------------------------------------
 -- Ex 7: Validate a String that's either a Bool or an Int. The return

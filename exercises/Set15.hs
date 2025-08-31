@@ -120,9 +120,22 @@ validateDiv a b = liftA2 compute checkFirst checkSecond
 data Address = Address String String String
   deriving (Show,Eq)
 
-validateAddress :: String -> String -> String -> Validation Address
-validateAddress streetName streetNumber postCode = todo
+validateStreetLength :: String -> String -> String -> Validation Address
+validateStreetLength s sn p = check (length s <= 20) "Invalid street name" (Address s sn p)
 
+validateStreetNumber :: String -> String -> String -> Validation Address
+validateStreetNumber s sn p = check (parseAmount sn /=  Nothing) "Invalid street number" (Address s sn p)     
+
+validatePostcode :: String -> String -> String -> Validation Address
+validatePostcode s sn p = check (length p == 5 && parseAmount p /=  Nothing) "Invalid postcode"  (Address s sn p)
+
+validateAddress :: String -> String -> String -> Validation Address
+validateAddress streetName streetNumber postCode = validateStreetLength streetName streetNumber postCode
+                                                   *>
+                                                   validateStreetNumber streetName streetNumber postCode
+                                                   *>
+                                                   validatePostcode streetName streetNumber postCode
+                                                   
 ------------------------------------------------------------------------------
 -- Ex 6: Given the names, ages and employment statuses of two
 -- persons, wrapped in Applicatives, return a list of two Person

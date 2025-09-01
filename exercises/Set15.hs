@@ -6,6 +6,7 @@ import Examples.Validation
 import Control.Applicative
 import Data.Char
 import Text.Read (readMaybe)
+import Data.Maybe (fromMaybe, fromJust)
 
 ------------------------------------------------------------------------------
 -- Ex 1: Sum two Maybe Int values using Applicative operations (i.e.
@@ -164,16 +165,6 @@ twoPersons name1 age1 employed1 name2 age2 employed2 =
 getPerson :: String -> Int -> Bool -> [Person]
 getPerson name age employed = [Person name age employed]
 
-  
-  -- return $ [(Person name1 age1 employed1), Person n2 a2 e2]
-  -- let n1 =  name1
-  -- a1 <- age1
-  -- e1 <- employed1
-  -- n2 <- name2
-  -- a2 <- age2
-  -- e2 <- employed2
-  -- return $ [(Person n1 a1 e1), Person n2 a2 e2]
-
 ------------------------------------------------------------------------------
 -- Ex 7: Validate a String that's either a Bool or an Int. The return
 -- type of the function uses Either Bool Int to be able to represent
@@ -191,8 +182,20 @@ getPerson name age employed = [Person name age employed]
 --  boolOrInt "13.2"    ==> Errors ["Not a Bool","Not an Int"]
 --  boolOrInt "Falseb"  ==> Errors ["Not a Bool","Not an Int"]
 
+parseBool :: String -> Maybe Bool 
+parseBool "True" = Just True 
+parseBool "False" = Just False
+parseBool _ = Nothing
+
+
+validateBool :: String -> Validation (Either Bool Int)
+validateBool str = check (parseBool str /= Nothing) "Not a Bool" (Left (fromJust $ parseBool str))
+
+validateInt :: String -> Validation (Either Bool Int)
+validateInt num  = check (parseAmount num /= Nothing) "Not an Int" (Right $  read num)
+
 boolOrInt :: String -> Validation (Either Bool Int)
-boolOrInt = todo
+boolOrInt s = validateBool s <|> validateInt s  
 
 ------------------------------------------------------------------------------
 -- Ex 8: Improved phone number validation. Implement the function
@@ -419,5 +422,6 @@ instance (Functor f, Functor g) => Functor (Both f g) where
 --              Errors ["fail 1","fail 2"]]
 
 instance (Applicative f, Applicative g) => Applicative (Both f g) where
-  pure = todo
+  pure :: (Applicative f, Applicative g) => a -> Both f g a
+  pure a  =  todo      
   liftA2 = todo

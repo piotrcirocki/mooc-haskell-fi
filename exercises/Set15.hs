@@ -343,7 +343,7 @@ instance MyApplicative [] where
   myLiftA2 = liftA2
 
 (<#>) :: (MyApplicative f) => f (a -> b) -> f a -> f b
-(<#>) = myLiftA2 id    
+(<#>) = myLiftA2 id
 
 ------------------------------------------------------------------------------
 -- Ex 12: Reimplement fmap using liftA2 and pure. In practical terms,
@@ -360,7 +360,7 @@ instance MyApplicative [] where
 --  myFmap negate [1,2,3]  ==> [-1,-2,-3]
 
 myFmap :: MyApplicative f => (a -> b) -> f a -> f b
-myFmap = todo
+myFmap f a  = myPure f <#> a 
 
 ------------------------------------------------------------------------------
 -- Ex 13: Given a function that returns an Alternative value, and a

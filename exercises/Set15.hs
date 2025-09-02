@@ -309,7 +309,7 @@ instance Applicative Priced where
   pure :: a -> Priced a
   pure = Priced 0
   liftA2 :: (a -> b -> c) -> Priced a -> Priced b -> Priced c
-  liftA2 f (Priced x y) (Priced z v) = Priced (x+z) (f y v)  
+  liftA2 f (Priced x y) (Priced z v) = Priced (x+z) (f y v)
 
 
 ------------------------------------------------------------------------------
@@ -360,7 +360,7 @@ instance MyApplicative [] where
 --  myFmap negate [1,2,3]  ==> [-1,-2,-3]
 
 myFmap :: MyApplicative f => (a -> b) -> f a -> f b
-myFmap f a  = myPure f <#> a 
+myFmap f a  = myPure f <#> a
 
 ------------------------------------------------------------------------------
 -- Ex 13: Given a function that returns an Alternative value, and a
@@ -386,8 +386,39 @@ myFmap f a  = myPure f <#> a
 --     tryAll (\x -> if x>0 then pure x else invalid "zero") [0,0,0]
 --       ==> Errors ["zero","zero","zero"]
 
-tryAll :: Alternative f => (a -> f b) -> [a] -> f b
-tryAll = todo
+-- class Applicative f => Alternative f where
+--   empty :: f a
+--   (<|>) :: f a -> f a -> f a
+--   -- some other operations omitted
+
+-- instance Alternative Validation where
+--   empty = Errors []
+--   Ok x <|> _ = Ok x
+--   Errors e1 <|> Ok y = Ok y
+--   Errors e1 <|> Errors e2 = Errors (e1++e2)
+
+-- myMapM :: Applicative f => (a -> f b) -> [a] -> f [b]
+-- myMapM op [] = pure []
+-- myMapM op (x:xs) = liftA2 (:) (op x) (myMapM op xs)
+
+-- The equivalent of mapM for Applicative is called traverse. It’s a member of the type class Traversable:
+
+-- traverse :: (Traversable t, Applicative f) => (a -> f b) -> t a -> f (t b)
+
+-- That’s one heck of a type signature, so let’s simplify it a bit. Lists are Traversable, so we can specialize this type into:
+
+-- traverse :: Applicative f => (a -> f b) -> [a] -> f [b]
+-- Prelude> :t myMapM
+-- myMapM :: Applicative f => (a -> f b) -> [a] -> f [b]
+
+tryAll :: (Alternative f) => (a -> f b) -> [a] -> f b
+tryAll op [] = empty
+tryAll op [x] = op x
+tryAll op (x:xs) = op x <|> tryAll op xs
+
+
+--myMapM op (x:xs) = (:) <|>   (op x) (myMapM op xs)
+--myPure f <|> (fmap f a)
 
 ------------------------------------------------------------------------------
 -- Ex 14: Here's the type `Both` that expresses the composition of

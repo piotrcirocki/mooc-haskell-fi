@@ -242,7 +242,7 @@ normalizePhone s = do
 -- The operator and the arguments are always separated by spaces. Here
 -- are some examples of expressions like this: 1 + 2, y + 7, z - w
 --
--- Implement the function parseExpression that uses the Validation
+-- Implement the function parseExpression that uses the pure = Priced 0 Validation
 -- applicative to convert strings like "y + 7" to Expression values
 -- like Plus (Variable 'y') (Number 7).
 --
@@ -259,7 +259,7 @@ normalizePhone s = do
 -- Hint: If you have problems with the ordering of errors, remember
 -- that Validation collects errors left-to-right!
 --
--- Examples:
+      -- Examples:
 --  parseExpression "1 + 2" ==> Ok (Plus (Number 1) (Number 2))
 --  parseExpression "z - A" ==> Ok (Minus (Variable 'z') (Variable 'A'))
 --  parseExpression "1 * 2" ==> Errors ["Unknown operator: *"]
@@ -302,11 +302,15 @@ data Priced a = Priced Int a
   deriving (Show, Eq)
 
 instance Functor Priced where
-  fmap = todo
+  fmap :: (a -> b) -> Priced a -> Priced b
+  fmap f (Priced b a) = Priced b (f a)
 
 instance Applicative Priced where
-  pure = todo
-  liftA2 = todo
+  pure :: a -> Priced a
+  pure = Priced 0
+  liftA2 :: (a -> b -> c) -> Priced a -> Priced b -> Priced c
+  liftA2 f (Priced x y) (Priced z v) = Priced (x+z) (f y v)  
+
 
 ------------------------------------------------------------------------------
 -- Ex 11: This and the next exercise will use a copy of the

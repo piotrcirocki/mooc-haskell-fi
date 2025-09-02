@@ -444,10 +444,28 @@ newtype Both f g a = Both (f (g a))
 
 instance (Functor f, Functor g) => Functor (Both f g) where
   fmap :: (Functor f, Functor g) => (a -> b) -> Both f g a -> Both f g b
-  fmap = todo
+  fmap f (Both x) = Both (fmap (fmap f) x )
+
+
+--fmap (fmap f) Both x <- correct syntax 
+-- fmap (fmap (fmap f)) x
+  --fmap f (Both x) = fmap (fmap f (Both (myPure (f)) ) ) (Both x)
+
+--fmap f (Both x) = fmap (fmap Both (f)  x )(Both x)
+
+--fmap (fmap f) x
+
+-- class Functor f where
+--   fmap :: (a -> b) -> f a -> f b
+
+-- instance Functor Maybe where
+--   -- In this instance, the type of fmap is:
+--   -- fmap :: (a -> b) -> Maybe a -> Maybe b
+--   fmap f Nothing = Nothing
+--   fmap f (Just x) = Just (f x)
 
 ------------------------------------------------------------------------------
--- Ex 15: The composition of two Applicatives is also an Applicative!
+-- Ex 15: The composition of fst $ ftwo Applicatives is also an Applicative!
 -- Implement the instance Applicative (Both f g) (given that f and g
 -- are already Applicatives).
 --
@@ -473,5 +491,6 @@ instance (Functor f, Functor g) => Functor (Both f g) where
 
 instance (Applicative f, Applicative g) => Applicative (Both f g) where
   pure :: (Applicative f, Applicative g) => a -> Both f g a
-  pure a  =  todo
+  pure a  = todo
+  liftA2 :: (Applicative f, Applicative g) => (a -> b -> c) -> Both f g a -> Both f g b -> Both f g c
   liftA2 = todo

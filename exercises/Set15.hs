@@ -1,3 +1,5 @@
+{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+{-# HLINT ignore "Use isDigit" #-}
 module Set15 where
 
 import Mooc.Todo
@@ -93,7 +95,7 @@ validateDiv a b = liftA2 compute checkFirst checkSecond
   where checkFirst = pure a
         checkSecond = check (b /= 0) "Division by zero!" b
         compute x y = x `div` y
-        
+
 ------------------------------------------------------------------------------
 -- Ex 5: Validating street addresses. A street address consists of a
 -- street name, a street number, and a postcode.
@@ -125,7 +127,7 @@ validateStreetLength :: String -> String -> String -> Validation Address
 validateStreetLength s sn p = check (length s <= 20) "Invalid street name" (Address s sn p)
 
 validateStreetNumber :: String -> String -> String -> Validation Address
-validateStreetNumber s sn p = check (parseAmount sn /=  Nothing) "Invalid street number" (Address s sn p)     
+validateStreetNumber s sn p = check (parseAmount sn /=  Nothing) "Invalid street number" (Address s sn p)
 
 validatePostcode :: String -> String -> String -> Validation Address
 validatePostcode s sn p = check (length p == 5 && parseAmount p /=  Nothing) "Invalid postcode"  (Address s sn p)
@@ -136,7 +138,7 @@ validateAddress streetName streetNumber postCode = validateStreetLength streetNa
                                                    validateStreetNumber streetName streetNumber postCode
                                                    *>
                                                    validatePostcode streetName streetNumber postCode
-                                                   
+
 ------------------------------------------------------------------------------
 -- Ex 6: Given the names, ages and employment statuses of two
 -- persons, wrapped in Applicatives, return a list of two Person
@@ -161,7 +163,7 @@ twoPersons name1 age1 employed1 name2 age2 employed2 =
   liftA2 (++)
   (getPerson <$> name1 <*> age1  <*> employed1)
   (getPerson <$> name2 <*> age2  <*> employed2)
-  
+
 getPerson :: String -> Int -> Bool -> [Person]
 getPerson name age employed = [Person name age employed]
 
@@ -182,8 +184,8 @@ getPerson name age employed = [Person name age employed]
 --  boolOrInt "13.2"    ==> Errors ["Not a Bool","Not an Int"]
 --  boolOrInt "Falseb"  ==> Errors ["Not a Bool","Not an Int"]
 
-parseBool :: String -> Maybe Bool 
-parseBool "True" = Just True 
+parseBool :: String -> Maybe Bool
+parseBool "True" = Just True
 parseBool "False" = Just False
 parseBool _ = Nothing
 
@@ -195,7 +197,7 @@ validateInt :: String -> Validation (Either Bool Int)
 validateInt num  = check (parseAmount num /= Nothing) "Not an Int" (Right $  read num)
 
 boolOrInt :: String -> Validation (Either Bool Int)
-boolOrInt s = validateBool s <|> validateInt s  
+boolOrInt s = validateBool s <|> validateInt s
 
 ------------------------------------------------------------------------------
 -- Ex 8: Improved phone number validation. Implement the function
@@ -218,8 +220,20 @@ boolOrInt s = validateBool s <|> validateInt s
 --  normalizePhone "123 456 78 999"
 --    ==> Errors ["Too long"]
 
+trimPhone :: String -> String
+trimPhone = filter (not . isSpace)
+
+checkLength :: String -> Validation String
+checkLength s = check (length s <= 10) "Too long" s
+
+checkCharacters :: String -> Validation String
+checkCharacters = traverse checkChar
+  where checkChar x = check (isDigit x) ("Invalid character: " ++ [x]) x
+
 normalizePhone :: String -> Validation String
-normalizePhone = todo
+normalizePhone s = do
+  let x = trimPhone s
+  checkLength x *> checkCharacters x
 
 ------------------------------------------------------------------------------
 -- Ex 9: Parsing expressions. The Expression type describes an
@@ -423,5 +437,5 @@ instance (Functor f, Functor g) => Functor (Both f g) where
 
 instance (Applicative f, Applicative g) => Applicative (Both f g) where
   pure :: (Applicative f, Applicative g) => a -> Both f g a
-  pure a  =  todo      
+  pure a  =  todo
   liftA2 = todo

@@ -259,7 +259,7 @@ normalizePhone s = do
 -- Hint: If you have problems with the ordering of errors, remember
 -- that Validation collects errors left-to-right!
 --
-      -- Examples:
+-- Examples:
 --  parseExpression "1 + 2" ==> Ok (Plus (Number 1) (Number 2))
 --  parseExpression "z - A" ==> Ok (Minus (Variable 'z') (Variable 'A'))
 --  parseExpression "1 * 2" ==> Errors ["Unknown operator: *"]
@@ -342,8 +342,10 @@ instance MyApplicative [] where
   myPure = pure
   myLiftA2 = liftA2
 
-(<#>) :: MyApplicative f => f (a -> b) -> f a -> f b
-f <#> x = todo
+(<#>) :: (MyApplicative f, Applicative f) => f (a -> b) -> f a -> f b
+f <#> x =  f <*> x
+
+
 
 ------------------------------------------------------------------------------
 -- Ex 12: Reimplement fmap using liftA2 and pure. In practical terms,
@@ -412,6 +414,7 @@ newtype Both f g a = Both (f (g a))
   deriving Show
 
 instance (Functor f, Functor g) => Functor (Both f g) where
+  fmap :: (Functor f, Functor g) => (a -> b) -> Both f g a -> Both f g b
   fmap = todo
 
 ------------------------------------------------------------------------------

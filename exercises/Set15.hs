@@ -444,12 +444,12 @@ newtype Both f g a = Both (f (g a))
 
 instance (Functor f, Functor g) => Functor (Both f g) where
   fmap :: (Functor f, Functor g) => (a -> b) -> Both f g a -> Both f g b
-  fmap f (Both x) = Both (fmap (fmap f) x )
+  fmap f (Both x) = Both (fmap (fmap f) x)
 
 
 --fmap (fmap f) Both x <- correct syntax 
 -- fmap (fmap (fmap f)) x
-  --fmap f (Both x) = fmap (fmap f (Both (myPure (f)) ) ) (Both x)
+--fmap f (Both x) = fmap (fmap f (Both (myPure (f)) ) ) (Both x)
 
 --fmap f (Both x) = fmap (fmap Both (f)  x )(Both x)
 
@@ -491,6 +491,6 @@ instance (Functor f, Functor g) => Functor (Both f g) where
 
 instance (Applicative f, Applicative g) => Applicative (Both f g) where
   pure :: (Applicative f, Applicative g) => a -> Both f g a
-  pure a  = todo
+  pure a = Both (pure $ pure a)
   liftA2 :: (Applicative f, Applicative g) => (a -> b -> c) -> Both f g a -> Both f g b -> Both f g c
   liftA2 = todo

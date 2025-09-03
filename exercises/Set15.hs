@@ -120,6 +120,9 @@ validateDiv a b = liftA2 compute checkFirst checkSecond
 --  validateAddress "Haskeller's favourite road" "35a" "1333"
 --    ==> Errors ["Invalid street name","Invalid street number","Invalid postcode"]
 
+isAllDigit :: String  -> Bool
+isAllDigit s = all isDigit s  
+
 data Address = Address String String String
   deriving (Show,Eq)
 
@@ -127,10 +130,10 @@ validateStreetLength :: String -> String -> String -> Validation Address
 validateStreetLength s sn p = check (length s <= 20) "Invalid street name" (Address s sn p)
 
 validateStreetNumber :: String -> String -> String -> Validation Address
-validateStreetNumber s sn p = check (parseAmount sn /=  Nothing) "Invalid street number" (Address s sn p)
+validateStreetNumber s sn p = check (isAllDigit sn /= False ) "Invalid street number" (Address s sn p)
 
 validatePostcode :: String -> String -> String -> Validation Address
-validatePostcode s sn p = check (length p == 5 && parseAmount p /=  Nothing) "Invalid postcode"  (Address s sn p)
+validatePostcode s sn p = check (length p == 5 && isAllDigit p /= False ) "Invalid postcode"  (Address s sn p)
 
 validateAddress :: String -> String -> String -> Validation Address
 validateAddress streetName streetNumber postCode = validateStreetLength streetName streetNumber postCode
@@ -493,4 +496,37 @@ instance (Applicative f, Applicative g) => Applicative (Both f g) where
   pure :: (Applicative f, Applicative g) => a -> Both f g a
   pure a = Both (pure $ pure a)
   liftA2 :: (Applicative f, Applicative g) => (a -> b -> c) -> Both f g a -> Both f g b -> Both f g c
-  liftA2 = todo
+  liftA2 f (Both a) (Both b) = todo  --Both (f (f (b a) )  (f a (f b )) )
+      
+-- getValues :: (a -> b -> c) -> (f (g a)) -> (f (g b) )
+-- getValues f (f a) (f b) = getValues2 f a b
+
+-- getValues2 (a -> b -> c) ->  (g a ) ->  (g b )
+-- getValues2 f (g a ) (g b ) = f a b
+
+
+-- validateDiv :: Int -> Int -> Validation Int
+-- validateDiv a b = liftA2 compute checkFirst checkSecond
+--   where checkFirst = pure a
+--         checkSecond = check (b /= 0) "Division by zero!" b
+--         compute x y = x `div` y
+      
+-- (a-> b -> c )
+-- f (g a )
+-- f (g b)
+-- validateDiv :: Int -> Int -> Validation Int
+-- validateDiv a b = liftA2 compute checkFirst checkSecond
+--   where checkFirst = pure a
+--         checkSecond = check (b /= 0) "Division by zero!" b
+--         compute x y = x `div` y
+
+-- liftA2 :: (a -> b -> c) -> Priced a -> Priced b -> Priced c
+-- liftA2 f (Priced x y) (Priced z v) = Priced (x+z) (f y v)
+-- liftA2 :: (a -> b -> c) -> f a -> f b -> f c
+
+
+ -- liftA2 f (Just x) (Just y) = Just (f x y)
+
+-- bunches = liftA2 copy [1,2,3] fruits
+--   where copy n f = unwords (replicate n f)
+  

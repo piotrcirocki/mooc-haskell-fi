@@ -40,10 +40,10 @@ incrementAll = fmap (+1)
 
 fmap2 :: (Functor f, Functor g) => (a -> b) -> f (g a) -> f (g b)
 fmap2 = (fmap . fmap)
-
+--fmap (fmap f) x
 fmap3 :: (Functor f, Functor g, Functor h) => (a -> b) -> f (g (h a)) -> f (g (h b))
 fmap3 = (fmap . fmap2)
-
+-- fmap (fmap (fmap f)) x
 ------------------------------------------------------------------------------
 -- Ex 3: below you'll find a type Result that works a bit like Maybe,
 -- but there are two different types of "Nothings": one with and one

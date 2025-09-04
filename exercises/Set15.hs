@@ -279,8 +279,41 @@ data Arg = Number Int | Variable Char
 data Expression = Plus Arg Arg | Minus Arg Arg
   deriving (Show, Eq)
 
+validateString :: String -> Validation String
+validateString s  = check (head s == '+') ("Invalid variable: " ++ show s) s 
+validateVariable :: String -> Validation Arg
+validateVariable s = check (head s == '+') ("Invalid variable: " ++ show s)  (Variable $ head s) 
+
+validateNumber :: String ->  Validation Arg
+validateNumber s = check (head s == '+') ("Invalid number: " ++ show s) (Number $ read s) 
+
+validateArg :: String -> Validation Arg
+validateArg s = validateNumber s <|> validateVariable s 
+
+validatePlus :: Arg -> String -> Arg -> Validation Expression 
+validatePlus l s r  = check (head s == '+')("Unknown operator: " ++ show s) (Plus l r)
+
+validateMinus :: Arg -> String -> Arg -> Validation Expression 
+validateMinus  l s r = check (head s == '-')("Unknown operator: " ++ show s) (Minus l r )
+
+validateExpression :: Arg -> String -> Arg -> Validation Expression
+validateExpression l s r = validatePlus l s r <|> validateMinus l s  r 
+
+getWords :: String -> [String]
+getWords = words
+
 parseExpression :: String -> Validation Expression
-parseExpression = todo
+parseExpression e = do
+  let ws = words e
+  let l = ws !! 0
+  let s = ws !! 1
+  let r = ws !! 2
+  let  valVariableL = validateVariable l
+  let validateS = validateString s 
+  let valVariableR = validateVariable r
+  let expr = validateExpression <$> valVariableL <*> validateS <*> valVariableL  --  l s r
+  expr
+  
 
 ------------------------------------------------------------------------------
 -- Ex 10: The Priced T type tracks a value of type T, and a price

@@ -121,7 +121,7 @@ validateDiv a b = liftA2 compute checkFirst checkSecond
 --    ==> Errors ["Invalid street name","Invalid street number","Invalid postcode"]
 
 isAllDigit :: String  -> Bool
-isAllDigit s = all isDigit s  
+isAllDigit s = all isDigit s
 
 data Address = Address String String String
   deriving (Show,Eq)
@@ -279,41 +279,39 @@ data Arg = Number Int | Variable Char
 data Expression = Plus Arg Arg | Minus Arg Arg
   deriving (Show, Eq)
 
-validateString :: String -> Validation String
-validateString s  = check (head s == '+') ("Invalid variable: " ++ show s) s 
 validateVariable :: String -> Validation Arg
-validateVariable s = check (head s == '+') ("Invalid variable: " ++ show s)  (Variable $ head s) 
+validateVariable s = check ((length s == 1) &&  (isAlpha $ head s)) ("Invalid variable: " ++ s)  (Variable $ head s)
 
 validateNumber :: String ->  Validation Arg
-validateNumber s = check (head s == '+') ("Invalid number: " ++ show s) (Number $ read s) 
+validateNumber s = check ((isAllDigit s) && (isDigit $ head s)) ("Invalid number: " ++ s) (Number ((read s) :: Int) )
 
 validateArg :: String -> Validation Arg
-validateArg s = validateNumber s <|> validateVariable s 
+validateArg s = validateNumber s <|> validateVariable s
 
-validatePlus :: Arg -> String -> Arg -> Validation Expression 
-validatePlus l s r  = check (head s == '+')("Unknown operator: " ++ show s) (Plus l r)
+validateOperator :: String -> Validation String
+validateOperator o  = check (o `elem` ["+", "-"]) ("Unknown operator: " ++ o) o
 
-validateMinus :: Arg -> String -> Arg -> Validation Expression 
-validateMinus  l s r = check (head s == '-')("Unknown operator: " ++ show s) (Minus l r )
+invalidateExpression :: String -> Validation Expression
+invalidateExpression arr = check
+                           (length ( words arr ) == 3)
+                           ("Invalid expression: " ++ arr)
+                           (Plus (Variable 'a') (Variable 'b'))
 
-validateExpression :: Arg -> String -> Arg -> Validation Expression
-validateExpression l s r = validatePlus l s r <|> validateMinus l s  r 
-
-getWords :: String -> [String]
-getWords = words
+buildExpression :: String -> Arg  -> Arg -> Expression
+buildExpression "+" l  r =  Plus l r
+buildExpression "-" l  r =  Minus l r
 
 parseExpression :: String -> Validation Expression
 parseExpression e = do
   let ws = words e
-  let l = ws !! 0
-  let s = ws !! 1
-  let r = ws !! 2
-  let  valVariableL = validateVariable l
-  let validateS = validateString s 
-  let valVariableR = validateVariable r
-  let expr = validateExpression <$> valVariableL <*> validateS <*> valVariableL  --  l s r
-  expr
-  
+  if length ws /= 3 then
+    invalidateExpression e
+  else do
+      let l = ws !! 0
+      let s = ws !! 1
+      let r = ws !! 2
+      liftA3 buildExpression (validateOperator s) (validateArg l) (validateArg r)
+
 
 ------------------------------------------------------------------------------
 -- Ex 10: The Priced T type tracks a value of type T, and a price

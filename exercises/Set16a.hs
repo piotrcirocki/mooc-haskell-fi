@@ -16,9 +16,8 @@ import Data.List
 --  *** Failed! Falsified (after 1 test):
 --  *Set16a> quickCheck (isSorted [])
 --  +++ OK, passed 1 test.
-
 isSorted :: (Show a, Ord a) => [a] -> Property
-isSorted = todo
+isSorted a = a === sort a 
 
 ------------------------------------------------------------------------------
 -- Ex 2: In this and the following exercises, we'll build a suite of

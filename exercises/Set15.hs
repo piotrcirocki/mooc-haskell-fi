@@ -312,7 +312,6 @@ parseExpression e = do
       let r = ws !! 2
       liftA3 buildExpression (validateOperator s) (validateArg l) (validateArg r)
 
-
 ------------------------------------------------------------------------------
 -- Ex 10: The Priced T type tracks a value of type T, and a price
 -- (represented by an Int). Implement the Functor and Applicative

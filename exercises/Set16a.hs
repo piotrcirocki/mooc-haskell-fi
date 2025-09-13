@@ -49,9 +49,9 @@ isSorted a = a === sort a
 --  *Set16a> quickCheck (sumIsLength [4,5,6,4,5,4] (freq1 [4,5,6,4,5,4]))
 --  +++ OK, passed 1 test.
 
-count :: (Eq a, Ord a ) =>  [a] -> [(a,Int)]
-count  xs = 
-    map (\grp -> (head grp, length grp)) (group $ sort xs)
+-- count :: (Eq a, Ord a ) =>  [a] -> [(a,Int)]
+-- count  xs = 
+--     map (\grp -> (head grp, length grp)) (group $ sort xs)
 
 
 sumIsLength :: (Show a, Eq a , Ord a ) => [a] -> [(a,Int)] -> Property
@@ -65,9 +65,9 @@ sumIsLength input output = (length input) === sum [x | (_,x) <- output] -- forAl
 
 --sumIsLength "z" [('p',2)] --should fail 
 
-checkIf :: (Eq a ) =>  [(a, Int)] -> (a, Int) -> Property
-checkIf [] empty = True === True
-checkIf xs (x, n) = (not (any (\(y, m) -> x == y && n /= m) xs) ) === True 
+-- checkIf :: (Eq a ) =>  [(a, Int)] -> (a, Int) -> Property
+-- checkIf [] empty = True === True
+-- checkIf xs (x, n) = (not (any (\(y, m) -> x == y && n /= m) xs) ) === True 
 
 
 
@@ -97,12 +97,32 @@ freq1 (x:y:xs) = [(x,1),(y,length xs + 1)]
 --  *Set16a> quickCheck (inputInOutput [4,5,6,4,5,4] (freq2 [4,5,6,4,5,4]))
 --  +++ OK, passed 100 tests.
 
-inputInOutput :: (Show a, Eq a, Ord a) => [a] -> [(a,Int)] -> Property
-inputInOutput input output = todo 
+-- inputInOutput :: (Show a, Eq a, Ord a) => [a] -> [(a,Int)] -> Property
+-- inputInOutput input output = todo 
+
+-- inputInOutput :: (Show a, Eq a , Ord a ) => [a] -> [(a,Int)] -> Property
+-- inputInOutput [] output = True === True  
+-- inputInOutput input output = forAll (elements $ count input) (checkIf output)
+--(not (any (\(y, m) -> x == y && n /= m) xs) ) === True 
+
+count :: (Eq a, Ord a ) =>  [a] -> [(a,Int)]
+count  xs = 
+    map (\grp -> (head grp, length grp)) (group $ sort xs)
+
+checkIf :: (Eq a ) =>  [(a, Int)] -> (a, Int) -> Property
+checkIf [] empty = True === True
+checkIf xs (x, n) = any (\(y, _) -> x == y) xs === True  --(not (any (\(y, m) -> x == y && n /= m) xs) ) === True 
+
+
+inputInOutput :: (Show a, Eq a , Ord a ) => [a] -> [(a,Int)] -> Property
+inputInOutput [] output = True === True
+inputInOutput _ [] = False === True 
+inputInOutput input output = forAll (elements $ count input) (checkIf output)
 
 -- This function passes both the sumIsLength and inputInOutput tests
 freq2 :: Eq a => [a] -> [(a,Int)]
 freq2 xs = map (\x -> (x,1)) xs
+
 ------------------------------------------------------------------------------
 -- Ex 4: Implement a Property that takes a pair (x,n) from the
 -- output, and checks that x occurs n times in the input.
@@ -129,6 +149,12 @@ freq2 xs = map (\x -> (x,1)) xs
 
 outputInInput :: (Show a, Eq a) => [a] -> [(a,Int)] -> Property
 outputInInput input output = todo
+
+
+-- checkIf :: (Eq a ) =>  [(a, Int)] -> (a, Int) -> Property
+-- checkIf [] empty = True === True
+-- checkIf xs (x, n) = any (\(y, _) -> x == y) xs === True
+
 
 -- This function passes the outputInInput test but not the others
 freq3 :: Eq a => [a] -> [(a,Int)]

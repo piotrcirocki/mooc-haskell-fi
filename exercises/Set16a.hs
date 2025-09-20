@@ -235,11 +235,9 @@ frequencies (x:ys) = (x, length xs) : frequencies others
 --  [2,4,10]
 genList :: Gen [Int]
 genList = do
-  let n =   (choose (0, 10) >>= \c -> return c)
+  let n = choose (0, 10)
   c <- choose (3, 5)
-  
   x <-  vectorOf c n
-
   return $ (sort x) 
   
 

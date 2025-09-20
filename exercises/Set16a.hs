@@ -192,8 +192,19 @@ freq3 (x:xs) = [(x,1 + length (filter (==x) xs))]
 --  *Set16a> quickCheck (frequenciesProp frequencies)
 --  +++ OK, passed 100 tests.
 
+toList :: NonEmptyList Char -> [Char]
+toList (NonEmpty xs) = xs
+
 frequenciesProp :: ([Char] -> [(Char,Int)]) -> NonEmptyList Char -> Property
-frequenciesProp freq input = todo
+frequenciesProp freq input = conjoin [
+  (sumIsLength (toList input) (freq $ toList input)),
+  (inputInOutput (toList input) (freq $ toList input)),
+  (outputInInput (toList input) (freq $ toList input))
+  ]
+
+
+-- frequenciesProp :: ([Char] -> [(Char,Int)]) -> NonEmptyList Char -> Property
+-- frequenciesProp freq input = todo
 
 frequencies :: Eq a => [a] -> [(a,Int)]
 frequencies [] = []

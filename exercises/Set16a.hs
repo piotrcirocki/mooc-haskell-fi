@@ -147,8 +147,18 @@ freq2 xs = map (\x -> (x,1)) xs
 --  *Set16a> quickCheck (outputInInput [4,5,6,4,5,4] (freq3 [4,5,6,4,5,4]))
 --  +++ OK, passed 100 tests.
 
-outputInInput :: (Show a, Eq a) => [a] -> [(a,Int)] -> Property
-outputInInput input output = todo
+-- outputInInput :: (Show a, Eq a) => [a] -> [(a,Int)] -> Property
+-- outputInInput input output = todo
+
+outputInInput :: (Show a, Eq a, Ord a) => [a] -> [(a,Int)] -> Property
+outputInInput [] output = False === True
+outputInInput _ [] = True === True 
+outputInInput input output = forAll (elements $ output ) (checkIf2 input)
+
+checkIf2 :: (Eq a, Ord a) => [a] -> (a, Int) -> Property
+checkIf2 arr (x, n) = do
+  let cts = count $ arr
+  ((any (\(y, m) -> x == y && n == m) cts))  === True 
 
 
 -- checkIf :: (Eq a ) =>  [(a, Int)] -> (a, Int) -> Property

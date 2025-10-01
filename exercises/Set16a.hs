@@ -238,8 +238,7 @@ genList = do
   let n = choose (0, 10)
   c <- choose (3, 5)
   x <-  vectorOf c n
-  return $ (sort x) 
-  
+  return $ sort x
 
 
 
@@ -279,7 +278,10 @@ data Expression = Plus Arg Arg | Minus Arg Arg
   deriving (Show, Eq)
 
 instance Arbitrary Arg where
-  arbitrary = todo
+  arbitrary :: Gen Arg
+  arbitrary = oneof [Number <$> suchThat arbitrary (\x -> x >= 0 && x <= 10),
+                     Variable <$> suchThat arbitrary (\x -> x `elem` ['a', 'b', 'c','x', 'y' , 'z' ]) ]
 
 instance Arbitrary Expression where
-  arbitrary = todo
+  arbitrary :: Gen Expression
+  arbitrary = oneof [Plus <$> arbitrary <*> arbitrary, Minus <$> arbitrary <*> arbitrary]

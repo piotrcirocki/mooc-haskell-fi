@@ -47,19 +47,28 @@ composeRates (Rate rate1) (Rate rate2) = Rate(rate1 * rate2)
 --  fromName (toLast "smith") ==> "smith"
 --  toFirst "bob" :: Name First
 --  toLast "smith" :: Name Last
+data First
+data Last
+data Full
 
+data Name name = Name String
+  deriving (Show, Eq)
 
 -- Get the String contained in a name
 --fromName :: Name a -> String
-fromName = todo
+
+fromName :: Name name -> String 
+fromName (Name a) = a
 
 -- Build a Name First
 --toFirst :: String -> Name First
-toFirst = todo
+toFirst :: String -> Name First
+toFirst a = Name a
 
 -- Build a Name Last
 --toLast :: String -> Name Last
-toLast = todo
+toLast :: String -> Name Last
+toLast a = Name a
 
 ------------------------------------------------------------------------------
 -- Ex 4: Implement the functions capitalize and toFull.

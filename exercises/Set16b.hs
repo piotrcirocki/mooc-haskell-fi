@@ -27,8 +27,8 @@ pounds = Money 3
 -- For testing
 usdToChf :: Rate USD CHF
 usdToChf = Rate 1.11
-
-composeRates rate1 rate2 = todo
+composeRates :: Rate from to2 -> Rate to2 to -> Rate from to
+composeRates (Rate rate1) (Rate rate2) = Rate(rate1 * rate2)
 
 ------------------------------------------------------------------------------
 -- Ex 3: Tracking first, last and full names with phantom types. The

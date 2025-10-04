@@ -111,3 +111,14 @@ toFull (Name a) (Name b) = Name (a ++ " " ++ b)
 class Render currency where
   render :: Money currency -> String
 
+instance Render EUR where
+  render :: Money EUR -> String
+  render (Money a) = show a ++ "e"
+
+instance Render USD where
+  render :: Money USD -> String
+  render (Money a) = "$" ++ show a
+
+instance Render CHF where
+  render :: Money CHF -> String
+  render (Money a) = show a ++ "chf"

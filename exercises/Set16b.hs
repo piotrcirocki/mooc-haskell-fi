@@ -5,6 +5,7 @@ import Examples.Phantom
 
 import Data.Char (toUpper)
 
+
 ------------------------------------------------------------------------------
 -- Ex 1: Define a constant pounds with type Money GBP and a value of
 -- 3. The type Money is imported from Example.Phantom but you'll need
@@ -88,9 +89,15 @@ toLast a = Name a
 --  capitalize (toLast "smith") :: Name Last
 --  fromName (capitalize (toLast "smith")) ==> "Smith"
 
-capitalize = todo
+capitalised :: String -> String
+capitalised [] = []
+capitalised x = toUpper (head x) : (tail x)
 
-toFull = todo
+capitalize :: Name name -> Name name  
+capitalize (Name a) = Name (capitalised a)
+
+toFull :: Name First ->  Name Last -> Name Full 
+toFull (Name a) (Name b) = Name (a ++ " " ++ b)
 
 ------------------------------------------------------------------------------
 -- Ex 5: Type classes can let you write code that handles different
